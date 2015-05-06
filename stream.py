@@ -7,7 +7,10 @@ import sys
 from math import floor
 from db_sql import write_db
 
-def convert_data(data_block):
+def convert_data(data_block, rain_overflow):
+    
+    with open('rain_last.save', 'r') as f:
+        rain_last = int(f.read())
     
     weather = {}
 
@@ -48,9 +51,22 @@ def convert_data(data_block):
                                       )/10
             weather['wind_d'] = int(data_block[pos][9]) * 22.5
         if alt == 4 and (pos == 2 or pos == alt + 2):
-            weather['rain'] = int(''.join(data_block[pos][7:10]))
+            rain_temp = sum([
+                             int(val)*16**(2-j) for j,val in 
+                             enumerate(data_block[pos][7:10])
+                           ])
+            if rain_temp < rain_last:
+                with open('rain_overflow.save', 'w') as f:
+                    rain_overflow = rain_last * 0.51657 + rain_overflow
+                    f.write(str(rain_overflow))
+            with open('rain_last.save', 'w') as f:
+                f.write(str(rain_temp))
+            weather['rain'] = rain_temp * 0.51657 + rain_overflow
     
     write_db(weather)
+
+with open('rain_overflow.save', 'r') as f:
+    rain_overflow = float(f.read())
 
 silence = 0
 pulse_len = 0
@@ -84,7 +100,7 @@ while True:
         elif silence > 2000:
             if len(block) == 6 or len(block) == 8:
                 print("Success: Block received")
-                convert_data(block)
+                convert_data(block, rain_overflow)
             else:
                 print("Error: Not all blocks received")
             receive = False

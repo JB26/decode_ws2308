@@ -1,37 +1,22 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import sessionmaker
+import sqlite3
+from datetime import datetime
 
-engine = create_engine('sqlite:///:memory:', echo=False)
-Base = declarative_base()
+conn = sqlite3.connect('weather.db')
+c = conn.cursor()
+c.execute('''create table if not exists weather(year int, month int, day int, 
+                                                hour int, minute int, 
+                                                sensor text, value real)''')
+sql = "INSERT INTO weather VALUES (?, ?, ?, ?, ?, ?, ?)"
 
-class Weather(Base):
-    __tablename__ = 'weather'
-    
-    id = Column(Integer, primary_key=True)
-    year = Column(Integer)
-    month = Column(Integer)
-    day = Column(Integer)
-    hour = Column(Integer)
-    minute  = Column(Integer)
-    temp_out = Column(Float)
-    temp_in = Column(Float)
-    humidity_out = Column(Integer)
-    humidity_in = Column(Float)
-    wind_v = Column(Float)
-    wind_d = Column(Float)
-    pressure_in = Column(Float)
-    rain = Column(Float)
-    
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-
-def write_db(weather_data):
-    session = Session()
-    session.add(Weather(**weather_data))
-    session.commit()
-    for instance in session.query(Weather).order_by(Weather.id):
-        print(instance.temp_out)
-        print(instance.rain)
-        print(instance.humidity_out)
+def write_db(weather):
+    year = int(datetime.now().strftime("%Y"))
+    month = int(datetime.now().strftime("%m"))
+    day = int(datetime.now().strftime("%d"))
+    hour = int(datetime.now().strftime("%H"))
+    minute = int(datetime.now().strftime("%M"))
+    for sensor, value in weather.items():
+        c.execute(sql, (year, month, day, hour, minute, sensor, value))
+    conn.commit()
+    c.execute('select * from weather')
+    for row in c:
+        print(row)
