@@ -5,7 +5,10 @@
 import struct
 import sys
 from math import floor
+from time import sleep
+
 from db_sql import write_db
+from arduino_read import weather_inside
 
 def convert_data(data_block, rain_overflow):
     
@@ -31,7 +34,6 @@ def convert_data(data_block, rain_overflow):
 
     # convert data
     
-    print(data_block)
     alt = int(len(data_block)/2)
     pos = False
     for i in range(0, alt):
@@ -64,6 +66,8 @@ def convert_data(data_block, rain_overflow):
             weather['rain'] = rain_temp * 0.51657 + rain_overflow
     
     write_db(weather)
+    write_db(weather_inside())
+    sleep(90)
 
 with open('rain_overflow.save', 'r') as f:
     rain_overflow = float(f.read())
