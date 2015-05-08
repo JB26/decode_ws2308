@@ -1,11 +1,13 @@
 #! /usr/bin/python3
 
 # Needs 12k as input!
+# One signal at 12kHz is around 28000 "short int" long
+
 
 import struct
 import sys
 from math import floor
-from time import sleep
+import numpy as np
 
 from db_sql import write_db
 from arduino_read import weather_inside
@@ -67,48 +69,65 @@ def convert_data(data_block, rain_overflow):
     
     write_db(weather)
     write_db(weather_inside())
-    sleep(90)
+    
+def get_sample():
+    dt = np.dtype('i2')
+    threshold = 13000
+    return ( abs( np.frombuffer(sys.stdin.buffer.read(2**16), dtype=dt) ) 
+             > threshold )
 
-with open('rain_overflow.save', 'r') as f:
-    rain_overflow = float(f.read())
+def main():
+    with open('rain_overflow.save', 'r') as f:
+               rain_overflow = float(f.read())
 
-silence = 0
-pulse_len = 0
-packet = []
-block = []
-receive = False
-while True:
-    sample = struct.unpack("h", sys.stdin.buffer.read(2))[0]
-    if abs(sample) > 17000:
-        receive = True
-        silence = 0
-        pulse_len += 1
-    elif receive:
-        if pulse_len > 0:
-            if pulse_len < 6 and pulse_len > 2:
-                packet.append('1')
-                pulse_len = 0
-            elif pulse_len < 20 and pulse_len > 14:
-                packet.append('0')
-                pulse_len = 0
+    silence = 0
+    pulse_len = 0
+    packet = []
+    block = []
+
+    sample = get_sample()
+    if np.any(sample):
+        # Make sure the signal is not cut off
+        sample = np.append(sample, get_sample())
+        index = np.nonzero(sample == True)[0]
+        # Cut signal
+        sample = sample[index[0]:index[-1] + 1]
+        # Add "silence" to mark the end of the signal
+        sample = np.append(sample, np.array([False]*40))
+        for val in sample:
+            if val == True:
+                silence = 0
+                pulse_len += 1
+            elif pulse_len > 0:
+                if pulse_len < 6 and pulse_len > 2:
+                    packet.append('1')
+                    pulse_len = 0
+                elif pulse_len < 20 and pulse_len > 14:
+                    packet.append('0')
+                    pulse_len = 0
+                else:
+                    pulse_len = 0
+                    print("Error: Pulse to long or to short")
+            elif silence > 30 and len(packet) > 0:
+                if len(packet) == 52:
+                    block.append(packet)
+                    packet = []
+                else:
+                    print("Error: Not enough bits received")
+                    packet = []
             else:
-                pulse_len = 0
-                print("Error: Pulse to long or to short")
-        elif silence > 30 and len(packet) > 0:
-            if len(packet) == 52:
-                block.append(packet)
-                packet = []
-            else:
-                print("Error: Not enough bits received")
-                packet = []
-        elif silence > 2000:
-            if len(block) == 6 or len(block) == 8:
-                print("Success: Block received")
-                convert_data(block, rain_overflow)
-            else:
-                print("Error: Not all blocks received")
-            receive = False
-            block = []
-            silence = 0
+                silence += 1
+        if len(block) == 6 or len(block) == 8:
+            # Check for six blocks but rain?
+            print("Success: Block received")
+            convert_data(block, rain_overflow)
+            return False
         else:
-            silence += 1
+            print("Error: Not all blocks received")
+        
+    return True
+
+if __name__ == "__main__":
+    wait = True
+    while wait:
+        wait = main()
