@@ -37,7 +37,7 @@ def read_data(sensor, start_date, end_date):
     
     c.execute("""SELECT * FROM weather WHERE sensor = ? BETWEEN ? AND ?
                  ORDER BY date""", 
-              (sensor, ) + str(start_date) + str(end_date))
+              (sensor, start_date, end_date, ))
     rows = c.fetchall()
     data = {'labels' : [], 'values' : []}
     for row in rows:
