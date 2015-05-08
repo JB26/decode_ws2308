@@ -45,8 +45,13 @@ def read_data(sensor, period={'hours':1}):
     c.execute("""SELECT * FROM weather WHERE sensor = ? ORDER BY 
                  date DESC LIMIT ?""", (sensor, count, ))
     rows = c.fetchall()
+    last = -1
+    delta = delta_time(rows, last)
+    while delta > timedelta(**period) and (len(rows) + last) > 1:
+        last -= 1
+        delta = delta_time(rows, last)
     data = {'labels' : [], 'values' : []}
-    for row in rows:
+    for row in rows[0:len(rows) + last + 1]:
         data['labels'].append(row['minute'])
         data['values'].append(row['value'])
     data['labels'].reverse()
