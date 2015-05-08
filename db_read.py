@@ -27,15 +27,8 @@ def read_current():
         c.execute("""SELECT * FROM weather WHERE sensor = ? ORDER BY 
                      date DESC LIMIT 1""", (sensor,))
         weather[sensor] = c.fetchone()
-    c.execute("""SELECT * FROM weather WHERE sensor = ? ORDER BY 
-                 date DESC LIMIT 6""", ('rain',) )
-    rain_6 = c.fetchall()
-    last = last_index(rain_6, {"minutes" : 61})
-    if (len(rain_6) + last) < 2:
-        rain_last_hour = 0
-    else:
-        rain_last_hour = rain_6[0]['value'] - rain_6[last]['value']
-    weather['rain_last_hour'] = {'value' : round(rain_last_hour,1)}
+
+    weather['rain_last_hour'] = {'value' : 0}
     c.close()
     return weather
 
