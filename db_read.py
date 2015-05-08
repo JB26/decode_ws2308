@@ -9,6 +9,14 @@ def delta_time(values, last):
               datetime(values[last]['year'], values[last]['month'], values[last]['day'], 
                        values[last]['hour'], values[last]['minute']) )
     return(delta)
+    
+def last_index(values, period):
+    last = -1
+    delta = delta_time(values, last)
+    while delta > timedelta(**period) and (len(values) + last) > 1:
+        last -= 1
+        delta = delta_time(values, last)
+    return last
 
 def read_current():
     c, conn = connect()
@@ -22,11 +30,7 @@ def read_current():
     c.execute("""SELECT * FROM weather WHERE sensor = ? ORDER BY 
                  date DESC LIMIT 6""", ('rain',) )
     rain_6 = c.fetchall()
-    last = -1
-    delta = delta_time(rain_6, last)
-    while delta > timedelta(minutes=61) and (len(rain_6) + last) > 1:
-        last -= 1
-        delta = delta_time(rain_6, last)
+    last = last_index(rain_6, {"minutes" : 61})
     if (len(rain_6) + last) < 2:
         rain_last_hour = 0
     else:
@@ -35,24 +39,16 @@ def read_current():
     c.close()
     return weather
 
-def read_data(sensor, period={'hours':1}):
+def read_data(sensor, start_date, end_date):
     c, conn = connect()
-    minutes = timedelta(**period).total_seconds()/60
-    if sensor == "rain":
-        count = int(minutes/10)
-    else:
-        count = int(minutes/2)
-    c.execute("""SELECT * FROM weather WHERE sensor = ? ORDER BY 
-                 date DESC LIMIT ?""", (sensor, count, ))
+    
+    c.execute("""SELECT * FROM weather WHERE sensor = ? BETWEEN ? AND ?
+                 ORDER BY date""", 
+              (sensor, ) + start_date + end_date)
     rows = c.fetchall()
-    last = -1
-    delta = delta_time(rows, last)
-    while delta > timedelta(**period) and (len(rows) + last) > 1:
-        last -= 1
-        delta = delta_time(rows, last)
     data = {'labels' : [], 'values' : []}
-    for row in rows[0:len(rows) + last + 1]:
-        data['labels'].append(row['minute'])
+    for row in rows:
+        data['labels'].append(row['date'])
         data['values'].append(row['value'])
     data['labels'].reverse()
     data['values'].reverse()

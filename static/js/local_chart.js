@@ -39,7 +39,7 @@ window.onload = function(){
   new_graph("humidity_out");
   new_graph("wind_v");
   new_graph("wind_d");
-  new_graph("rain");
+  //new_graph("rain");
   new_graph("temp_in");
   new_graph("humidity_in");
   new_graph("pressure_in");

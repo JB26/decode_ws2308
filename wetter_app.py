@@ -3,6 +3,7 @@ from mako.lookup import TemplateLookup
 import cherrypy
 from cherrypy.lib import static
 import json
+from datetime import datetime, timedelta
 
 from db_read import read_current, read_data
 
@@ -19,7 +20,9 @@ class bibthek(object):
         
     @cherrypy.expose
     def json_statistic(self, sensor):
-        data = read_data(sensor)
+        end_date = datetime.now()
+        start_date = end_date - timedelta(hours = 10)
+        data = read_data(sensor, start_date, end_date)
         return(json.dumps(data))
 
 if __name__ == '__main__':
