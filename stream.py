@@ -119,7 +119,7 @@ def main(rp):
                 silence += 1
         if len(block) == 6 or len(block) == 8:
             # Check for six blocks but rain?
-            print("Success: Block received")
+            #print("Success: Block received")
             convert_data(block, rain_overflow)
             return True
         else:
