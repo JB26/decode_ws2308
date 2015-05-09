@@ -3,9 +3,9 @@
 # Needs 12k as input!
 # One signal at 12kHz is around 28000 "short int" long
 
-
+import os
+from time import sleep
 import struct
-import sys
 from math import floor
 import numpy as np
 
@@ -70,13 +70,14 @@ def convert_data(data_block, rain_overflow):
     write_db(weather)
     write_db(weather_inside())
     
-def get_sample():
+def get_sample(rp):
     dt = np.dtype('i2')
     threshold = 13000
-    return ( abs( np.frombuffer(sys.stdin.buffer.read(2**16), dtype=dt) ) 
+    response = rp.read(2**16)
+    return ( abs( np.frombuffer(response, dtype=dt) ) 
              > threshold )
 
-def main():
+def main(rp):
     with open('rain_overflow.save', 'r') as f:
                rain_overflow = float(f.read())
 
@@ -85,10 +86,10 @@ def main():
     packet = []
     block = []
 
-    sample = get_sample()
+    sample = get_sample(rp)
     if np.any(sample):
         # Make sure the signal is not cut off
-        sample = np.append(sample, get_sample())
+        sample = np.append(sample, get_sample(rp))
         index = np.nonzero(sample == True)[0]
         # Cut signal
         sample = sample[index[0]:index[-1] + 1]
@@ -121,13 +122,26 @@ def main():
             # Check for six blocks but rain?
             print("Success: Block received")
             convert_data(block, rain_overflow)
-            return False
+            return True
         else:
             print("Error: Not all blocks received")
         
-    return True
+    return False
 
 if __name__ == "__main__":
-    wait = True
-    while wait:
-        wait = main()
+    rtl_pipe = "/tmp/rtl_fm-stream"
+    try:
+        os.mkfifo(rtl_pipe)
+    except:
+        pass
+    open_rtl_fm = ("rtl_fm -M am -f 433.993M -s 12k 2>/dev/null > "
+                      + "/tmp/rtl_fm-stream & ")
+    os.system(open_rtl_fm)
+    rp = open(rtl_pipe, 'rb')
+    wait = False
+    while True:
+        if wait:
+            os.system("killall rtl_fm")
+            sleep(110)
+            os.system(open_rtl_fm)
+        wait = main(rp)
