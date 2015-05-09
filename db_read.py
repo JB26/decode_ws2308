@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import timedelta, datetime
+import numpy as np
 
 from db_sql import connect
 
@@ -27,7 +28,7 @@ def read_current():
     c.close()
     return weather
 
-def read_data(sensor, start_date, end_date):
+def read_data(sensor, start_date, end_date, limit_points = 0):
     c, conn = connect()
     
     c.execute("""SELECT * FROM weather WHERE sensor = ? 
@@ -47,4 +48,12 @@ def read_data(sensor, start_date, end_date):
         else:
             data['values'] = None
             data['labels'] = None
+
+    if limit_points != 0 and len(data['values']) > limit_points:
+        step_width = int(len(data['values'])/limit_points) + 1
+        values = [ np.mean(data['values'][i:i+step_width])
+                   for i in range(0,len(data['values']), step_width) ]
+
+        data['values'] = list(np.round(values,decimals=2))
+        data['labels'] = data['labels'][int(step_width/2)::step_width]
     return data

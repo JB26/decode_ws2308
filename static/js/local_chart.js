@@ -49,3 +49,4 @@ window.onload = function(){
   new_graph("humidity_in");
   new_graph("pressure_in");
 }
+

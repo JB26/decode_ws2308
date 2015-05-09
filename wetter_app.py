@@ -56,14 +56,14 @@ class bibthek(object):
         
     @cherrypy.expose
     def json_statistic(self, sensor, number=None, _type=None, 
-                       start_date=None, end_date=None):
+                       start_date=None, end_date=None, limit_points = 30):
 
         start_date, end_date, error = get_period(number, _type, start_date,
                                                  end_date)
         if error != None:
             return error
         else:
-            data = read_data(sensor, start_date, end_date)
+            data = read_data(sensor, start_date, end_date, limit_points)
             return(json.dumps(data))
 
 if __name__ == '__main__':
