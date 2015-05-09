@@ -5,7 +5,6 @@
 
 import os
 from time import sleep
-import struct
 from math import floor
 import numpy as np
 
@@ -135,7 +134,7 @@ if __name__ == "__main__":
     except:
         pass
     open_rtl_fm = ("rtl_fm -M am -f 433.993M -s 12k 2>/dev/null > "
-                      + "/tmp/rtl_fm-stream & ")
+                    + "/tmp/rtl_fm-stream & ")
     os.system(open_rtl_fm)
     rp = open(rtl_pipe, 'rb')
     wait = False
