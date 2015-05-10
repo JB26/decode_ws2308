@@ -36,10 +36,9 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
                  ORDER BY date""", 
               (sensor, start_date, end_date, ))
     rows = c.fetchall()
-    data = {'labels' : [], 'values' : []}
+    data = {'values' : [], 'key' : sensor}
     for row in rows:
-        data['labels'].append(row['date'][:-10])
-        data['values'].append(row['value'])
+        data['values'].append({'x' : row['date'][:-10], 'y' : row['value']})
     if sensor == "rain":
         if len(data['values']) > 2:
             x = data['values']
@@ -49,11 +48,12 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
             data['values'] = None
             data['labels'] = None
 
-    if limit_points != 0 and len(data['values']) > limit_points:
-        step_width = int(len(data['values'])/limit_points) + 1
-        values = [ np.mean(data['values'][i:i+step_width])
-                   for i in range(0,len(data['values']), step_width) ]
+    #if limit_points != 0 and len(data['values']) > limit_points:
+        #step_width = int(len(data['values'])/limit_points) + 1
+        #values = [ np.mean(data['values'][i:i+step_width])
+        #           for i in range(0,len(data['values']), step_width) ]
 
-        data['values'] = list(np.round(values,decimals=2))
-        data['labels'] = data['labels'][int(step_width/2)::step_width]
+        #data['values'] = [range(len(values)), list(np.round(values,decimals=2))]
+        #data['labels'] = data['labels'][int(step_width/2)::step_width]
+        #del data['labels']
     return data
