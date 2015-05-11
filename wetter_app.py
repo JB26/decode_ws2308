@@ -53,7 +53,12 @@ class bibthek(object):
                                      end_date=end_date,
                                      translated_time=translated_time,
                                      start=start, end=end)
-        
+
+    @cherrypy.expose
+    def stats(self):
+        mytemplate = mylookup.get_template("stats.html")
+        return mytemplate.render()
+
     @cherrypy.expose
     def json_statistic(self, sensor, number=None, _type=None, 
                        start_date=None, end_date=None, limit_points = 30):

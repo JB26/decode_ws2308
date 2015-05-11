@@ -1,5 +1,6 @@
 import sqlite3
 from datetime import timedelta, datetime
+from time import mktime, strptime
 import numpy as np
 
 from db_sql import connect
@@ -38,7 +39,7 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
     rows = c.fetchall()
     data = {'values' : [], 'key' : sensor}
     for row in rows:
-        data['values'].append({'x' : row['date'][:-10], 'y' : row['value']})
+        data['values'].append({'x' : int(mktime(strptime(row['date'][:-7], "%Y-%m-%d %H:%M:%S"))), 'y' : row['value']})
     if sensor == "rain":
         if len(data['values']) > 2:
             x = data['values']
