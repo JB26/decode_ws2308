@@ -2,112 +2,58 @@
 <body>
   <%include file="navbar.html" />
   <div class="container">
-    <div class="row">
-      <h2>Aktuelles Wetter in Bremen</h2>
-      <div class="col-md-6">
-      <h3>Aussen</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Sensor</th>
-            <th>Wert</th>
-            <th>Messzeitpunkt</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Temperatur</td>
-            <td>${weather['temp_out']['value']} °C</td>
-            <td>${weather['temp_out']['date'][:-10]}</td>
-          </tr>
-          <tr>
-            <td>Luftfeuchte</td>
-            <td>${weather['humidity_out']['value']} %</td>
-            <td>${weather['humidity_out']['date'][:-10]}</td>
-          </tr>
-          <tr>
-            <td>Wind</td>
-            <td>${weather['wind_v']['value']} m/s; ${weather['wind_d']['value']}°</td>
-            <td>${weather['wind_v']['date'][:-10]}</td>
-          </tr>
-          <tr>
-            <td>Regen (letzte Stunde)</td>
-            <td>${weather['rain_last_hour']['value']} ml</td>
-            <td>${weather['rain']['date'][:-10]}</td>
-          </tr>
-        </tbody>
-      </table>
+    % if current == 'index':
+      <%include file="index_current.html" />
+      <div class="row">
+        <h2>Letzte 24 Stunden</h2>
       </div>
-      <div class="col-md-6">
-      <h3>Innen (Jürn)</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Sensor</th>
-            <th>Wert</th>
-            <th>Messzeitpunkt</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Temperatur</td>
-            <td>${weather['temp_in']['value']} °C</td>
-            <td>${weather['temp_in']['date'][:-10]}</td>
-          </tr>
-          <tr>
-            <td>Luftfeuchte</td>
-            <td>${weather['humidity_in']['value']} %</td>
-            <td>${weather['humidity_in']['date'][:-10]}</td>
-          </tr>
-          <tr>
-            <td>Luftdruck</td>
-            <td>${weather['pressure_in']['value']} hPa</td>
-            <td>${weather['pressure_in']['date'][:-10]}</td>
-          </tr>
-        </tbody>
-      </table>
+    % elif current == 'stats':
+      <div class="row">
+        <h2>Statistiken</h2>
       </div>
-    </div>
-    <div class="row">
-      <h2>Letzte 24 Stunden</h2>
-    </div>
+    % endif
     <div class="row">
       <div class="col-md-12">
         <h3>Temperatur</h3>
-          <div id="temp" class="with-3d-shadow with-transitions chart">
-            <svg></svg>
-          </div>
+          <div id="temp"></div>
+          % if current == 'stats':
+            <%include file="zoom_buttons.html" />
+          % endif
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
-        <h3>Luftfeuchte</h3>
-          <div id="humi" class="with-3d-shadow with-transitions chart">
-            <svg></svg>
-          </div>
+        <h3>Luftfeuchtigkeit</h3>
+        <div id="humi"></div>
+        % if current == 'stats':
+            <%include file="zoom_buttons.html" />
+        % endif
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6">
-        <h3>Windgeschwindigkeit</h3>
-        <canvas class="chart" id="wind_v" width="2px" height="1px"></canvas>
-      </div>
-      <div class="col-md-6">
-        <h3>Windrichtung</h3>
-        <canvas class="chart" id="wind_d" width="2px" height="1px"></canvas>
+      <div class="col-md-12">
+        <h3>Wind</h3>
+        <div id="wind"></div>
+        % if current == 'stats':
+            <%include file="zoom_buttons.html" />
+        % endif
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6">
-        <h3>Regen</h3>
-        <canvas class="chart" id="rain" width="2px" height="1px"></canvas>
-      </div>
-      <div class="col-md-6">
-        <h3>Luftdruck innen</h3>
-        <canvas class="chart" id="pressure_in" width="2px" height="1px"></canvas>
+      <div class="col-md-12">
+        <h3>Luftdruck und Regen</h3>
+        <div id="pres_rain"></div>
+        % if current == 'stats':
+            <%include file="zoom_buttons.html" />
+        % endif
       </div>
     </div>
   </div>
-<script src="/static/js/local_chart_index.js"></script>
+<script src="/static/js/local_chart.js"></script>
+% if current == 'index':
+  <script src="/static/js/load_index_charts.js"></script>
+% elif current == 'stats':
+  <script src="/static/js/load_stats_charts.js"></script>
+% endif
 </body>
 </html>

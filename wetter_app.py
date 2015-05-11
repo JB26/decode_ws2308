@@ -11,7 +11,7 @@ mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           input_encoding='utf-8', encoding_errors='replace')
 
 default_type = "hours"
-default_number = 10
+default_number = 24
 
 def get_period(number, _type, start_date, end_date):
     if number != None and _type != None:
@@ -22,8 +22,8 @@ def get_period(number, _type, start_date, end_date):
             return (None, None, "Plese check your input")
     elif start_date != None and end_date != None:
         try:
-            start_date = datetime.strptime(start_date, "%Y-%m-%d %H:%M")
-            end_date = datetime.strptime(end_date, "%Y-%m-%d %H:%M")
+            start_date = datetime.strptime(start_date, "%Y-%m-%dT%H:%M")
+            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M")
         except:
             return (None, None, "Plese check your input2")
     else:
@@ -34,45 +34,32 @@ def get_period(number, _type, start_date, end_date):
 class bibthek(object):
 
     @cherrypy.expose
-    def index(self, number=None, _type=None, start_date=None, end_date=None):
+    def index(self):
         mytemplate = mylookup.get_template("index.html")
         weather = read_current()
-        if (number==None and _type==None
-            and start_date==None and end_date==None):
-            number = default_number
-            _type = default_type
-        translated_time = [["minutes","Minuten"],["hours","Stunden"],
-                           ["days","Tage"],["months","Monate"],
-                           ["years","Jahre"]]
-        start, end, error = get_period(number, _type, start_date, end_date)
-        if error != None:
-            return error
-        else:
-            return mytemplate.render(weather=weather, number=number,
-                                     _type=_type, start_date=start_date,
-                                     end_date=end_date,
-                                     translated_time=translated_time,
-                                     start=start, end=end)
+        return mytemplate.render(weather=weather, current="index" )
 
     @cherrypy.expose
-    def stats(self):
-        mytemplate = mylookup.get_template("stats.html")
-        return mytemplate.render()
+    def stats(self, start_date=None, end_date=None):
+        mytemplate = mylookup.get_template("index.html")
+        return mytemplate.render(current="stats")
 
     @cherrypy.expose
     def json_statistic(self, sensor, number=None, _type=None, 
-                       start_date=None, end_date=None, limit_points = 30):
+                       start_date=None, end_date=None, limit_points = 800):
 
         sensors = sensor.split('.')
         start_date, end_date, error = get_period(number, _type, start_date,
                                                  end_date)
         if error != None:
+            print("kuasfhaushfuaishfiuahsfiahsfiasf")
+            print(error)
             return error
         else:
             data = []
             for sensor in sensors:
-                data.append(read_data(sensor, start_date,
-                                      end_date, limit_points))
+                data += read_data(sensor, start_date,
+                                      end_date, limit_points)
             
             return(json.dumps(data))
 

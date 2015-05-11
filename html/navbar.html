@@ -4,8 +4,13 @@
     <a class="navbar-brand" href="#">Wetter</a>
   </div>
   <ul class="nav nav-tabs">
-    <li role="presentation" class="active"><a href="/">Jetzt</a></li>
-    <li role="presentation"><a href="/stats">Statistiken</a></li>
+    % if current == "index":
+      <li role="presentation" class="active"><a href="/">Jetzt</a></li>
+      <li role="presentation"><a href="/stats">Statistiken</a></li>
+    % elif current == "stats":
+      <li role="presentation"><a href="/">Jetzt</a></li>
+      <li role="presentation" class="active"><a href="/stats">Statistiken</a></li>
+    % endif
   </ul>
 </div>
 </nav>

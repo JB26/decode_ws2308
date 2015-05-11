@@ -37,29 +37,26 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
                  ORDER BY date""", 
               (sensor, start_date, end_date, ))
     rows = c.fetchall()
-    data = {'values' : [], 'key' : sensor}
-    if sensor == "temp_out" or sensor == "humidity_out":
-        data['key'] = "Aussen"
-    elif sensor == "temp_in" or sensor == "humidity_in":
-        data['key'] = "Innen"
-    
+    data = [['x_' + sensor],['data_' + sensor]]
     for row in rows:
-        data['values'].append({'x' : int(mktime(strptime(row['date'][:-7], "%Y-%m-%d %H:%M:%S"))), 'y' : row['value']})
+        data[0].append(row['date'][:-10])
+        data[1].append(row['value'])
     if sensor == "rain":
-        if len(data['values']) > 2:
-            x = data['values']
-            data['values'] = [ x[i+1]-x[i] for i in range(0,len(x)-1) ]
-            data['labels'].pop(1)
+        if len(data[1]) > 3:
+            x = data[1]
+            data[1] = [data[1][0]] + [ x[i+1]-x[i] for i in range(1,len(x)-1) ]
+            data[0].pop(1)
         else:
-            data['values'] = None
-            data['labels'] = None
+            data[1] = 0
+    if limit_points != 0 and len(data[1][1:]) > limit_points:
+        step_width = int(len(data[1][1:])/limit_points) + 1
+        if sensor == "rain":
+            values = [ np.sum(data[1][i:i+step_width])
+                       for i in range(1,len(data[1]), step_width) ]
+        else:
+            values = [ np.mean(data[1][i:i+step_width])
+                       for i in range(1,len(data[1]), step_width) ]
 
-    #if limit_points != 0 and len(data['values']) > limit_points:
-        #step_width = int(len(data['values'])/limit_points) + 1
-        #values = [ np.mean(data['values'][i:i+step_width])
-        #           for i in range(0,len(data['values']), step_width) ]
-
-        #data['values'] = [range(len(values)), list(np.round(values,decimals=2))]
-        #data['labels'] = data['labels'][int(step_width/2)::step_width]
-        #del data['labels']
+        data[1] = [data[1][0]] + list(np.round(values,decimals=2))
+        data[0] = [data[0][0]] + data[0][int(step_width/2)+1::step_width]
     return data

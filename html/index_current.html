@@ -1,0 +1,66 @@
+<div class="row">
+  <h2>Aktuelles Wetter in Bremen</h2>
+  <div class="col-md-6">
+  <h3>Aussen</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Temperatur</td>
+        <td>${weather['temp_out']['value']} °C</td>
+        <td>${weather['temp_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftfeuchte</td>
+        <td>${weather['humidity_out']['value']} %</td>
+        <td>${weather['humidity_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Wind</td>
+        <td>${weather['wind_v']['value']} m/s; ${weather['wind_d']['value']}°</td>
+        <td>${weather['wind_v']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Regen (letzte Stunde)</td>
+        <td>${weather['rain_last_hour']['value']} ml</td>
+        <td>${weather['rain']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="col-md-6">
+  <h3>Innen (Jürn)</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Temperatur</td>
+        <td>${weather['temp_in']['value']} °C</td>
+        <td>${weather['temp_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftfeuchte</td>
+        <td>${weather['humidity_in']['value']} %</td>
+        <td>${weather['humidity_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftdruck</td>
+        <td>${weather['pressure_in']['value']} hPa</td>
+        <td>${weather['pressure_in']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
