@@ -36,27 +36,28 @@ def convert_data(data_block, rain_overflow):
     # convert data
     
     alt = int(len(data_block)/2)
-    pos = False
+    pos = []
     for i in range(0, alt):
         if health[i]:
-            pos = i
+            pos.append(i)
         elif health[i + alt]:
-            pos = i + alt
-        if pos == 0 or pos == alt:
-            weather['temp_out'] = (int(''.join(data_block[pos][7:10]))-300)/10
-        if pos == 1 or pos == alt + 1:
-            weather['humidity_out'] = int(''.join(data_block[pos][7:9]))
-        if pos == alt - 1 or pos == alt * 2:
+            pos.append(i + alt)
+    for i in pos:
+        if data_block[i][2] == '0' or data_block[i][2] == '4':
+            weather['temp_out'] = (int(''.join(data_block[i][7:10]))-300)/10
+        elif data_block[i][2] == '1' or data_block[i][2] == '5':
+            weather['humidity_out'] = int(''.join(data_block[i][7:9]))
+        elif data_block[i][2] == '3' or data_block[i][2] == '7':
             weather['wind_v'] = floor( sum([
                                             int(val)*16**(1-j) for j,val in 
-                                            enumerate(data_block[pos][7:9])
+                                            enumerate(data_block[i][7:9])
                                            ])*90/25
                                       )/10
-            weather['wind_d'] = int(data_block[pos][9]) * 22.5
-        if alt == 4 and (pos == 2 or pos == alt + 2):
+            weather['wind_d'] = int(data_block[i][9]) * 22.5
+        if data_block[i][2] == '2' or data_block[i][2] == '6':
             rain_temp = sum([
                              int(val)*16**(2-j) for j,val in 
-                             enumerate(data_block[pos][7:10])
+                             enumerate(data_block[i][7:10])
                            ])
             if rain_temp < rain_last:
                 with open('rain_overflow.save', 'w') as f:
@@ -65,8 +66,9 @@ def convert_data(data_block, rain_overflow):
             with open('rain_last.save', 'w') as f:
                 f.write(str(rain_temp))
             weather['rain'] = rain_temp * 0.51657 + rain_overflow
-    
-    write_db(weather)
+
+    if len(weather) > 0:
+        write_db(weather)
     write_db(weather_inside())
     
 def get_sample(rp):
@@ -118,7 +120,6 @@ def main(rp):
             else:
                 silence += 1
         if len(block) == 6 or len(block) == 8:
-            # Check for six blocks but rain?
             #print("Success: Block received")
             convert_data(block, rain_overflow)
             return True
