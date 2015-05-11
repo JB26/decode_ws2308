@@ -23,6 +23,15 @@
     </div>
     <div class="row">
       <div class="col-md-12">
+        <h3>Luftdruck und Regen</h3>
+        <div id="pres_rain"></div>
+        % if current == 'stats':
+            <%include file="zoom_buttons.html" />
+        % endif
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
         <h3>Luftfeuchtigkeit</h3>
         <div id="humi"></div>
         % if current == 'stats':
@@ -34,15 +43,6 @@
       <div class="col-md-12">
         <h3>Wind</h3>
         <div id="wind"></div>
-        % if current == 'stats':
-            <%include file="zoom_buttons.html" />
-        % endif
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <h3>Luftdruck und Regen</h3>
-        <div id="pres_rain"></div>
         % if current == 'stats':
             <%include file="zoom_buttons.html" />
         % endif

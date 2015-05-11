@@ -32,7 +32,7 @@ def read_current():
 def read_data(sensor, start_date, end_date, limit_points = 0):
     c, conn = connect()
     
-    c.execute("""SELECT * FROM weather WHERE sensor = ? 
+    c.execute("""SELECT date, value FROM weather WHERE sensor = ? 
                  AND date BETWEEN ? AND ?
                  ORDER BY date""", 
               (sensor, start_date, end_date, ))
