@@ -24,10 +24,11 @@ function new_graph(sensor){
             ["%Y", function() { return true; }]
         ]);
         nv.addGraph(function() {
-        chart = nv.models.lineChart()
+        chart = nv.models.lineWithFocusChart()
         
         //chart.xScale = d3.time.scale();
         chart.margin({left: 100, right: 100, bottom: 50});
+        chart.brushExtent([1431323000, 1431329000])
         chart.useInteractiveGuideline(true)
         
         chart.xAxis
@@ -39,6 +40,17 @@ function new_graph(sensor){
     
         chart.yAxis
             .axisLabel('Temperatur (°C)')
+            .tickFormat(function(d) { return d3.format('.01f')(d) + '°C' })
+            ;
+
+        chart.x2Axis
+            .axisLabel('Datum')
+            .tickFormat(function(d) { return d3.time.format("%Y-%m-%d %H:%M")(new Date(d*1000)) })
+            .tickPadding(10)
+            .ticks(2)
+            ;
+    
+        chart.y2Axis
             .tickFormat(function(d) { return d3.format('.01f')(d) + '°C' })
             ;
     

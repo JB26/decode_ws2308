@@ -69,76 +69,22 @@
       </div>
     </div>
     <div class="row">
-      <h2>Statistiken</h2>
-      <div class="col-md-12">
-        <h4>Zeitraum</h4>
-        <p>Von jetzt bis:</p>
-        <form class="form-inline" action="/">
-          <div class="form-group">
-            <label for="number">Anzahl:</label>
-            % if number != None:
-              <input type="text" class="form-control" id="number" name="number" placeholder="60" value="${number}">
-            % else:
-              <input type="text" class="form-control" id="number" name="number" placeholder="60">
-            % endif
-          </div>
-          <div class="form-group">
-            <label for="_type">Schrittweite:</label>
-            <select class="form-control" id="_type" name="_type">
-              % for x in translated_time:
-                % if _type == x[0]:
-                  <option value="${x[0]}" selected>${x[1]}</option>
-                % else:
-                  <option value="${x[0]}">${x[1]}</option>
-                % endif
-              % endfor
-            </select>
-          </div>
-          <button type="submit" class="btn btn-default">Ok</button>
-        </form>
-        <p>Oder Zeitraum festlegen:</p>
-        <form class="form-inline" action="/">
-          <div class="form-group">
-            <label for="start_date">Anfang:</label>
-            % if start_date != None:
-              <input type="text" class="form-control" id="start_date" name="start_date" placeholder="2015-01-25 06:45" value="${start_date}">
-            % else:
-              <input type="text" class="form-control" id="start_date" name="start_date" placeholder="2015-01-25 06:45">
-            % endif
-          </div>
-          <div class="form-group">
-            <label for="start_date">Ende:</label>
-            % if end_date != None:
-              <input type="text" class="form-control" id="end_date" name="end_date" placeholder="2015-01-30 15:04" value="${end_date}">
-            % else:
-              <input type="text" class="form-control" id="end_date" name="end_date" placeholder="2015-01-30 15:04">
-            % endif
-          </div>
-        <button type="submit" class="btn btn-default">Ok</button>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <p>Aktueller Zeitraum von ${str(start)[:-10]} bis ${str(end)[:-10]}</p>
-      </div>
+      <h2>Letzte 24 Stunden</h2>
     </div>
     <div class="row">
       <div class="col-md-12">
         <h3>Temperatur</h3>
-          <div id="temp" class="with-3d-shadow with-transitions">
+          <div id="temp" class="with-3d-shadow with-transitions chart">
             <svg></svg>
           </div>
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6">
-        <h3>Luftfeuchte aussen</h3>
-        <canvas class="chart" id="humidity_out" width="2px" height="1px"></canvas>
-      </div>
-      <div class="col-md-6">
-        <h3>Luftfeuchte innen</h3>
-        <canvas class="chart" id="humidity_in" width="2px" height="1px"></canvas>
+      <div class="col-md-12">
+        <h3>Luftfeuchte</h3>
+          <div id="humi" class="with-3d-shadow with-transitions chart">
+            <svg></svg>
+          </div>
       </div>
     </div>
     <div class="row">

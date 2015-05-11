@@ -141,6 +141,6 @@ if __name__ == "__main__":
     while True:
         if wait:
             os.system("killall rtl_fm")
-            sleep(110)
+            sleep(105)
             os.system(open_rtl_fm)
         wait = main(rp)

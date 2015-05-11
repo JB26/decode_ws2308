@@ -38,6 +38,11 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
               (sensor, start_date, end_date, ))
     rows = c.fetchall()
     data = {'values' : [], 'key' : sensor}
+    if sensor == "temp_out" or sensor == "humidity_out":
+        data['key'] = "Aussen"
+    elif sensor == "temp_in" or sensor == "humidity_in":
+        data['key'] = "Innen"
+    
     for row in rows:
         data['values'].append({'x' : int(mktime(strptime(row['date'][:-7], "%Y-%m-%d %H:%M:%S"))), 'y' : row['value']})
     if sensor == "rain":
