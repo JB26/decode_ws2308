@@ -77,5 +77,5 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
         data[0] = [data[0][0]] + data[0][int(step_width/2)+1::step_width]
 
     if len(data[1]) == 1:
-        data = None
+        data = [None]
     return data

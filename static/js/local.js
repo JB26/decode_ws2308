@@ -72,6 +72,8 @@ function reload_data() {
                     data_array.push([data[3][0], data[3][data[3].length - 1]])
                 };
                 if (data_array.length != 0){
+                    chart[chart_name].data(data[1][0])[0].values.splice(0,1)
+                    chart[chart_name].data(data[3][0])[0].values.splice(0,1)
                     chart[chart_name].flow({
                         columns: data_array
                     });
