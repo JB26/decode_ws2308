@@ -42,7 +42,7 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
         data[0].append(row['date'][:-10])
         data[1].append(row['value'])
     if sensor == "rain":
-        if len(data[1]) > 3:
+        if len(data[1]) > 2:
             x = data[1]
             data[1] = [data[1][0]] + [ x[i+1]-x[i] for i in range(1,len(x)-1) ]
             data[0].pop(1)

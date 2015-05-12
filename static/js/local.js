@@ -12,7 +12,7 @@ $('.auto_reload').click(function(event) {
 
 function reload_data() {
     var sensors = ["temp_out.temp_in", "humidity_out.humidity_in", "wind_v.wind_d", "pressure_in.rain"],
-        opt = "_type=seconds&number=130";
+        opt = "_type=seconds&number=130000";
     for (sensor in sensors){
         sensor = sensors[sensor]
         $.getJSON( "/json_statistic/?" + opt, {sensor:sensor}, function(data) {
@@ -54,15 +54,18 @@ function reload_data() {
             };
             if (chart_name != ''){
                 var data_array = [],
-                    chart_data = chart[chart_name].xs();
+                    old1_last = chart[chart_name].xs()[data[1][0]].pop(),
+                    old2_last = chart[chart_name].xs()[data[3][0]].pop(),
+                    new1_last = new Date(data[0][data[0].length - 1].replace(' ', 'T')),
+                    new2_last = new Date(data[2][data[2].length - 1].replace(' ', 'T'));
                 // Don't update if the value already is in the chart
-                if (chart_data[data[0][0]][chart_data[data[0][0]].length -1] != data[0][data[0].length - 1]){
+                if (old1_last != new1_last){
                     data_array = [
                         [data[0][0], data[0][data[0].length - 1]],
                         [data[1][0], data[1][data[1].length - 1]]
                     ]
                 };
-                if (chart_data[data[2][0]][chart_data[data[2][0]].length -1] != data[2][data[2].length - 1]){
+                if (old2_last != new2_last){
                     data_array.push([data[2][0], data[2][data[2].length - 1]])
                     data_array.push([data[3][0], data[3][data[3].length - 1]])
                 };
