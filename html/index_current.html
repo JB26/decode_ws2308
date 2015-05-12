@@ -12,24 +12,24 @@
     </thead>
     <tbody>
       <tr>
-        <td>Temperatur</td>
-        <td id="data_temp_out">${weather['temp_out']['value']} °C</td>
-        <td id="x_temp_out">${weather['temp_out']['date'][:-10]}</td>
+        <td class="col-md-4">Temperatur</td>
+        <td id="data_temp_out" class="col-md-4">${weather['temp_out']['value']} °C</td>
+        <td id="x_temp_out" class="col-md-4">${weather['temp_out']['date'][:-10]}</td>
       </tr>
       <tr>
-        <td>Luftfeuchte</td>
-        <td id="data_humidity_out">${weather['humidity_out']['value']} %</td>
-        <td id="x_humidity_out">${weather['humidity_out']['date'][:-10]}</td>
+        <td class="col-md-4">Luftfeuchte</td>
+        <td id="data_humidity_out" class="col-md-4">${weather['humidity_out']['value']} %</td>
+        <td id="x_humidity_out" class="col-md-4">${weather['humidity_out']['date'][:-10]}</td>
       </tr>
       <tr>
-        <td>Wind</td>
-        <td id="data_wind">${weather['wind_v']['value']} m/s; ${weather['wind_d']['value']}°</td>
-        <td id="x_wind_v">${weather['wind_v']['date'][:-10]}</td>
+        <td class="col-md-4">Wind</td>
+        <td id="data_wind" class="col-md-4">${weather['wind_v']['value']} m/s; ${weather['wind_d']['value']}°</td>
+        <td id="x_wind_v" class="col-md-4">${weather['wind_v']['date'][:-10]}</td>
       </tr>
       <tr>
-        <td>Regen (letzte Stunde)</td>
-        <td id="data_rain">${weather['rain_last_hour']['value']} ml</td>
-        <td id="x_rain">${weather['rain']['date'][:-10]}</td>
+        <td class="col-md-4">Regen (letzte Stunde)</td>
+        <td id="data_rain" class="col-md-4">${weather['rain_last_hour']['value']} ml</td>
+        <td id="x_rain" class="col-md-4">${weather['rain']['date'][:-10]}</td>
       </tr>
     </tbody>
   </table>
