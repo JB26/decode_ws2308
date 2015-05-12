@@ -85,6 +85,7 @@ function new_graph(chart_name, show_subchart, range){
             bindto: id,
             padding: {
                 bottom: 5,
+                right: 100
             },
             data: {
                 xs: x_coord,
