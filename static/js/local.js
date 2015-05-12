@@ -53,13 +53,24 @@ function reload_data() {
                 $('#data_wind').text(wind_text);
             };
             if (chart_name != ''){
-                chart[chart_name].flow({
-                    columns: [
+                var data_array = [],
+                    chart_data = chart[chart_name].xs();
+                // Don't update if the value already is in the chart
+                if (chart_data[data[0][0]][chart_data[data[0][0]].length -1] != data[0][data[0].length - 1]){
+                    data_array = [
                         [data[0][0], data[0][data[0].length - 1]],
-                        [data[1][0], data[1][data[1].length - 1]],
-                        [data[2][0], data[2][data[2].length - 1]]
+                        [data[1][0], data[1][data[1].length - 1]]
                     ]
-                });
+                };
+                if (chart_data[data[2][0]][chart_data[data[2][0]].length -1] != data[2][data[2].length - 1]){
+                    data_array.push([data[2][0], data[2][data[2].length - 1]])
+                    data_array.push([data[3][0], data[3][data[3].length - 1]])
+                };
+                if (data_array.length != 0){
+                    chart[chart_name].flow({
+                        columns: data_array
+                    });
+                };
             };
         });
     };
