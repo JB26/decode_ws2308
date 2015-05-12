@@ -1,4 +1,7 @@
+chart = new Object(); //Global
+
 function new_graph(chart_name, show_subchart, range){
+    var x_label = 'Uhrzeit';
     if (chart_name == "temp"){
         var sensor = "temp_out.temp_in"
         var id = "#temp",
@@ -67,6 +70,19 @@ function new_graph(chart_name, show_subchart, range){
                 data_pressure_in: 'y',
                 data_rain: 'y2'
             };
+    }else if (chart_name == "wind_d_avg"){
+        var sensor = "wind_d_avg"
+        var id = "#wind_d_avg",
+            x_coord = {
+                'data_wind_d_avg' : 'x_wind_d_avg'
+            },
+            x_label = 'Windrichtung'
+            y_label = 'Vorkommen',
+            y_unit = '%',
+            data_names = {
+                data_wind_d_avg: 'Windrichtung',
+            },
+            two_y_axes = false;
     }
     var opt = window.location.href.split("?");
     if (opt.length < 2){
@@ -79,7 +95,7 @@ function new_graph(chart_name, show_subchart, range){
         ["%d.%m", function(d) { return d.getMonth(); }], // not Jan 1st
         ["%Y", function() { return true; }]
     ]);
-    chart = new Object(); //Global
+
     $.getJSON( "/json_statistic/?" + opt[1], {sensor:sensor}, function(data) {
         var chart_settings = {
             bindto: id,
@@ -89,11 +105,11 @@ function new_graph(chart_name, show_subchart, range){
             },
             data: {
                 xs: x_coord,
-                xFormat: '%Y-%m-%d %H:%M',
                 columns: data,
                 type: 'spline',
                 types: {
-                    data_rain: 'bar'
+                    data_rain: 'bar',
+                    data_wind_d_avg: 'bar'
                 },
                 names: data_names
             },
@@ -113,13 +129,8 @@ function new_graph(chart_name, show_subchart, range){
             },
             axis: {
                 x: {
-                    type: 'timeseries',
-                    tick: {
-                        fit : false,
-                        format: function (d) { return tickMultiFormat(new Date(d)); }
-                    },
                     label: {
-                        text: 'Uhrzeit',
+                        text: x_label,
                         position: 'outer-center'
                     }
                 },
@@ -131,11 +142,6 @@ function new_graph(chart_name, show_subchart, range){
                         text: y_label,
                         position: 'outer-middle'
                     }
-                }
-            },
-            tooltip: {
-                format: {
-                    title: function(d) { return d3.time.format('%Y-%m-%d %H:%M')(new Date(d)) }
                 }
             }
         };
@@ -152,6 +158,21 @@ function new_graph(chart_name, show_subchart, range){
                 }
             }
         };
+        if (chart_name == 'wind_d_avg'){
+            chart_settings.axis.x.tick = {format: function (d) { return d + '°'; }}
+        }else{
+            chart_settings.data.xFormat = '%Y-%m-%d %H:%M';
+            chart_settings.axis.x.type = 'timeseries';
+            chart_settings.axis.x.tick = {
+                fit : false,
+                format: function (d) { return tickMultiFormat(new Date(d)); }
+            }
+            chart_settings.tooltip = {
+                format: {
+                    title: function(d) { return d3.time.format('%Y-%m-%d %H:%M')(new Date(d)) }
+                }
+            }
+        }
         chart[chart_name] = c3.generate(chart_settings)
     });
 };

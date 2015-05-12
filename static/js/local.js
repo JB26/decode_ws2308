@@ -62,8 +62,6 @@ function reload_data() {
                     new2_last = new Date(data[2][data[2].length - 1].replace(' ', 'T'));
                 // Don't update if the value already is in the chart
                 if (old1_last.getTime() != new1_last.getTime()){
-                    console.log(old1_last)
-                    console.log(new1_last)
                     data_array = [
                         [data[0][0], data[0][data[0].length - 1]],
                         [data[1][0], data[1][data[1].length - 1]]

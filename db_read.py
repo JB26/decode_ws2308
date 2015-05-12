@@ -31,7 +31,11 @@ def read_current():
 
 def read_data(sensor, start_date, end_date, limit_points = 0):
     c, conn = connect()
-    
+    if sensor == 'wind_d_avg':
+        sensor = 'wind_d'
+        special = 'wind_d_avg'
+    else:
+        special = ''
     c.execute("""SELECT date, value FROM weather WHERE sensor = ? 
                  AND date BETWEEN ? AND ?
                  ORDER BY date""", 
@@ -48,6 +52,18 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
             data[0].pop(1)
         elif len(data[1]) == 2:
             data[1][1] = 0
+
+    if special == 'wind_d_avg' and len(data[1]) > 1:
+        wind_d_avg = np.unique(data[1][1:], return_counts = True)
+        data[0] = ['x_wind_d_avg'] + list(wind_d_avg[0])
+        sum_wind = wind_d_avg[1].sum()
+        if sum_wind != 0:
+            data[1] = (['data_wind_d_avg'] +
+                       [ int(x/sum_wind*1000)/10 for x in wind_d_avg[1] ])
+            print(data[1])
+        else:
+            data[1] = ['data_wind_d_avg'] + [0]*16
+
     if limit_points != 0 and (len(data[1]) + 1) > limit_points:
         step_width = int(len(data[1][1:])/limit_points) + 1
         if sensor == "rain":
@@ -59,4 +75,7 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
 
         data[1] = [data[1][0]] + list(np.round(values,decimals=2))
         data[0] = [data[0][0]] + data[0][int(step_width/2)+1::step_width]
+
+    if len(data[1]) == 1:
+        data = None
     return data

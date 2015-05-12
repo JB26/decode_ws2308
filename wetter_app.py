@@ -52,8 +52,6 @@ class bibthek(object):
         start_date, end_date, error = get_period(number, _type, start_date,
                                                  end_date)
         if error != None:
-            print("kuasfhaushfuaishfiuahsfiahsfiasf")
-            print(error)
             return error
         else:
             data = []
