@@ -19,7 +19,7 @@ function reload_data() {
             var wind_text = '',
                 chart_name = '';
             for (i in data){
-                if (data[i].length > 1){
+                if (data[i] != null && data[i].length > 1){
                     if (data[i][0] == "data_temp_out"){
                         $('#data_temp_out').text(data[i][data[i].length - 1] + ' °C');
                         chart_name = 'temp';
@@ -72,8 +72,6 @@ function reload_data() {
                     data_array.push([data[3][0], data[3][data[3].length - 1]])
                 };
                 if (data_array.length != 0){
-                    chart[chart_name].data(data[1][0])[0].values.splice(0,1)
-                    chart[chart_name].data(data[3][0])[0].values.splice(0,1)
                     chart[chart_name].flow({
                         columns: data_array
                     });
