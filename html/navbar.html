@@ -19,15 +19,17 @@
         <li role="presentation" class="active"><a href="/stats">Statistiken</a></li>
       % endif
     </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <li>
-        <p class="navbar-text">Automatisch aktualisieren:</p>
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-primary navbar-btn active auto_reload" id="auto_reload_off">Aus</button>
-          <button type="button" class="btn btn-primary navbar-btn auto_reload" id="auto_reload_on">An</button>
-        </div>
-      </li>
-    </ul>
+    % if current == "index":
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <p class="navbar-text">Automatisch aktualisieren:</p>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary navbar-btn active auto_reload" id="auto_reload_off">Aus</button>
+            <button type="button" class="btn btn-primary navbar-btn auto_reload" id="auto_reload_on">An</button>
+          </div>
+        </li>
+      </ul>
+    % endif
   </div>
 </div>
 </nav>
