@@ -54,8 +54,10 @@ function reload_data() {
             };
             if (chart_name != ''){
                 var data_array = [],
-                    old1_last = chart[chart_name].xs()[data[1][0]].pop(),
-                    old2_last = chart[chart_name].xs()[data[3][0]].pop(),
+                    old1_last_index = chart[chart_name].xs()[data[1][0]].length -1,
+                    old2_last_index = chart[chart_name].xs()[data[3][0]].length -1,
+                    old1_last = chart[chart_name].xs()[data[1][0]][old1_last_index],
+                    old2_last = chart[chart_name].xs()[data[3][0]][old2_last_index],
                     new1_last = new Date(data[0][data[0].length - 1].replace(' ', 'T')),
                     new2_last = new Date(data[2][data[2].length - 1].replace(' ', 'T'));
                 // Don't update if the value already is in the chart
