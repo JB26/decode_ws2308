@@ -46,9 +46,9 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
             x = data[1]
             data[1] = [data[1][0]] + [ x[i+1]-x[i] for i in range(1,len(x)-1) ]
             data[0].pop(1)
-        else:
-            data[1] = 0
-    if limit_points != 0 and len(data[1][1:]) > limit_points:
+        elif len(data[1]) == 2:
+            data[1][1] = 0
+    if limit_points != 0 and (len(data[1]) + 1) > limit_points:
         step_width = int(len(data[1][1:])/limit_points) + 1
         if sensor == "rain":
             values = [ np.sum(data[1][i:i+step_width])

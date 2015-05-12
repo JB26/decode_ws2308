@@ -10,7 +10,7 @@
     <a class="navbar-brand" href="#">Wetter</a>
   </div>
   <div class="collapse navbar-collapse">
-    <ul class="nav nav-tabs" id="navbar-collapse">
+    <ul class="nav navbar-nav" id="navbar-collapse">
       % if current == "index":
         <li role="presentation" class="active"><a href="/">Jetzt</a></li>
         <li role="presentation"><a href="/stats">Statistiken</a></li>
@@ -18,6 +18,15 @@
         <li role="presentation"><a href="/">Jetzt</a></li>
         <li role="presentation" class="active"><a href="/stats">Statistiken</a></li>
       % endif
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <p class="navbar-text">Automatisch aktualisieren:</p>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-primary navbar-btn active auto_reload" id="auto_reload_off">Aus</button>
+          <button type="button" class="btn btn-primary navbar-btn auto_reload" id="auto_reload_on">An</button>
+        </div>
+      </li>
     </ul>
   </div>
 </div>
