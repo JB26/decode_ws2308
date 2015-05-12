@@ -14,6 +14,7 @@ function reload_data() {
     var sensors = ["temp_out.temp_in", "humidity_out.humidity_in", "wind_v.wind_d", "pressure_in.rain"],
         opt = "_type=seconds&number=130";
     for (sensor in sensors){
+        sensor = sensors[sensor]
         $.getJSON( "/json_statistic/?" + opt, {sensor:sensor}, function(data) {
             var wind_text = '',
                 chart_name = '';
