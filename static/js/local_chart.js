@@ -1,6 +1,6 @@
-function new_graph(sensor, show_subchart, range){
-    if (sensor == "temp"){
-        sensor = "temp_out.temp_in"
+function new_graph(chart_name, show_subchart, range){
+    if (chart_name == "temp"){
+        var sensor = "temp_out.temp_in"
         var id = "#temp",
             x_coord = {
                 'data_temp_out' : 'x_temp_out',
@@ -13,8 +13,8 @@ function new_graph(sensor, show_subchart, range){
                 data_temp_in: 'Innen'
             },
             two_y_axes = false;
-    }else if (sensor == "humi"){
-        sensor = "humidity_out.humidity_in"
+    }else if (chart_name == "humi"){
+        var sensor = "humidity_out.humidity_in"
         var id = "#humi",
             x_coord = {
                 'data_humidity_out' : 'x_humidity_out',
@@ -27,8 +27,8 @@ function new_graph(sensor, show_subchart, range){
                 data_humidity_in: 'Innen'
             },
             two_y_axes = false;
-    }else if (sensor == "wind"){
-        sensor = "wind_v.wind_d"
+    }else if (chart_name == "wind"){
+        var sensor = "wind_v.wind_d"
         var id = "#wind",
             x_coord = {
                 'data_wind_v' : 'x_wind_v',
@@ -47,8 +47,8 @@ function new_graph(sensor, show_subchart, range){
                 data_wind_v: 'y',
                 data_wind_d: 'y2'
             };
-    }else if (sensor == "pres_rain"){
-        sensor = "pressure_in.rain"
+    }else if (chart_name == "pres_rain"){
+        var sensor = "pressure_in.rain"
         var id = "#pres_rain",
             x_coord = {
                 'data_pressure_in' : 'x_pressure_in',
@@ -79,9 +79,13 @@ function new_graph(sensor, show_subchart, range){
         ["%d.%m", function(d) { return d.getMonth(); }], // not Jan 1st
         ["%Y", function() { return true; }]
     ]);
+    chart = new Object(); //Global
     $.getJSON( "/json_statistic/?" + opt[1], {sensor:sensor}, function(data) {
         var chart_settings = {
             bindto: id,
+            padding: {
+                bottom: 5,
+            },
             data: {
                 xs: x_coord,
                 xFormat: '%Y-%m-%d %H:%M',
@@ -127,6 +131,11 @@ function new_graph(sensor, show_subchart, range){
                         position: 'outer-middle'
                     }
                 }
+            },
+            tooltip: {
+                format: {
+                    title: function(d) { return d3.time.format('%Y-%m-%d %H:%M')(new Date(d)) }
+                }
             }
         };
         if (two_y_axes){
@@ -142,13 +151,14 @@ function new_graph(sensor, show_subchart, range){
                 }
             }
         };
-        chart = c3.generate(chart_settings)
+        chart[chart_name] = c3.generate(chart_settings)
     });
 };
 
 $('.zoom').click(function(event) {
     var new_range = [],
-        z = chart.zoom()
+        chart_name = $(this).attr('id').split("_")[1],
+        z = chart[chart_name].zoom();
     for (i = 0; i < 2; i++) {
         new_range[i] = z[i].getFullYear() + '-' + pad(z[i].getMonth() + 1) +
             '-' + pad(z[i].getDate()) + 'T' + pad(z[i].getHours()) + ':' +

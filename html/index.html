@@ -17,7 +17,7 @@
         <h3>Temperatur</h3>
           <div id="temp"></div>
           % if current == 'stats':
-            <%include file="zoom_buttons.html" />
+            <%include file="zoom_buttons.html" args="chart_name='temp'" />
           % endif
       </div>
     </div>
@@ -26,7 +26,7 @@
         <h3>Luftdruck und Regen</h3>
         <div id="pres_rain"></div>
         % if current == 'stats':
-            <%include file="zoom_buttons.html" />
+            <%include file="zoom_buttons.html" args="chart_name='pres_rain'" />
         % endif
       </div>
     </div>
@@ -35,7 +35,7 @@
         <h3>Luftfeuchtigkeit</h3>
         <div id="humi"></div>
         % if current == 'stats':
-            <%include file="zoom_buttons.html" />
+            <%include file="zoom_buttons.html" args="chart_name='humi'" />
         % endif
       </div>
     </div>
@@ -44,7 +44,7 @@
         <h3>Wind</h3>
         <div id="wind"></div>
         % if current == 'stats':
-            <%include file="zoom_buttons.html" />
+            <%include file="zoom_buttons.html" args="chart_name='wind'" />
         % endif
       </div>
     </div>
