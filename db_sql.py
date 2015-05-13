@@ -7,13 +7,26 @@ def connect():
     c = conn.cursor()
     return c, conn
 
-c, conn = connect()
-c.execute('''create table if not exists weather(sensor text, value real, 
+def init():
+    c, conn = connect()
+    c.execute('''create table if not exists weather(sensor text, value real, 
                                                 date timestamp)''')
-sql = "INSERT INTO weather VALUES (?, ?, ?)"
-
-def write_db(weather):
+    c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON weather(date DESC, sensor)''')
+    conn.close()
     
+def write_db(weather):
+    c, conn = connect()
+    sql = "INSERT INTO weather VALUES (?, ?, ?)"
     for sensor, value in weather.items():
         c.execute(sql, ( sensor, value, datetime.now()) )
     conn.commit()
+    conn.close()
+
+def read_db(sensor, start_date, end_date):
+    c, conn = connect()
+    c.execute("""SELECT * FROM weather WHERE date BETWEEN ? AND ?
+                 AND sensor = ? ORDER BY date DESC""",
+              (start_date, end_date, sensor, ))
+    rows = c.fetchall()
+    c.close()
+    return rows

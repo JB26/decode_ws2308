@@ -58,7 +58,7 @@ class bibthek(object):
             for sensor in sensors:
                 data += read_data(sensor, start_date,
                                       end_date, limit_points)
-            
+
             return(json.dumps(data))
 
 if __name__ == '__main__':

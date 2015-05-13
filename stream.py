@@ -8,7 +8,7 @@ from time import sleep
 from math import floor
 import numpy as np
 
-from db_sql import write_db
+import db_sql
 from arduino_read import weather_inside
 
 def convert_data(data_block, rain_overflow):
@@ -68,8 +68,8 @@ def convert_data(data_block, rain_overflow):
             weather['rain'] = rain_temp * 0.51657 + rain_overflow
 
     if len(weather) > 0:
-        write_db(weather)
-    write_db(weather_inside())
+        db_sql.write_db(weather)
+    db_sql.write_db(weather_inside())
     
 def get_sample(rp):
     dt = np.dtype('i2')
@@ -129,6 +129,7 @@ def main(rp):
     return False
 
 if __name__ == "__main__":
+    db_sql.init()
     rtl_pipe = "/tmp/rtl_fm-stream"
     try:
         os.mkfifo(rtl_pipe)
