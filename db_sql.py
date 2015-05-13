@@ -24,7 +24,7 @@ def write_db(weather):
 
 def read_db(sensor, start_date, end_date):
     c, conn = connect()
-    c.execute("""SELECT * FROM weather WHERE date BETWEEN ? AND ?
+    c.execute("""SELECT date, value FROM weather WHERE date BETWEEN ? AND ?
                  AND sensor = ? ORDER BY date DESC""",
               (start_date, end_date, sensor, ))
     rows = c.fetchall()

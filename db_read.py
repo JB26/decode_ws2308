@@ -13,7 +13,6 @@ def read_current():
         rows = db_sql.read_db(sensor,
                               (datetime.now() - timedelta(minutes = 61)),
                               datetime.now())
-        print(rows)
         weather[sensor] = rows[-1]
         if sensor == 'rain':
             if len(rows) > 2:
