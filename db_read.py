@@ -13,10 +13,10 @@ def read_current():
         rows = db_sql.read_db(sensor,
                               (datetime.now() - timedelta(minutes = 61)),
                               datetime.now())
-        weather[sensor] = rows[-1]
+        weather[sensor] = rows[0]
         if sensor == 'rain':
             if len(rows) > 2:
-                rain_last_hour = rows[-1]['value'] - rows[0]['value']
+                rain_last_hour = rows[0]['value'] - rows[-1]['value']
             else:
                 rain_last_hour = "Nan"
             weather['rain_last_hour'] = {'value' : rain_last_hour}
