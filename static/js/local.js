@@ -6,7 +6,7 @@ $('.auto_reload').click(function(event) {
         clearInterval(nIntervId);
     }else{
         reload_data();
-        nIntervId =  setInterval(reload_data, 120000);
+        nIntervId =  setInterval(reload_data, 125000);
     }
 })
 
@@ -53,7 +53,6 @@ function reload_data() {
             if (chart_name != ''){
                 chart[chart_name].load({
                     columns: data,
-                    unload: [data[1][0], data[3][0]]
                 });
             };
         });
