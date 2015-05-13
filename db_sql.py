@@ -11,7 +11,7 @@ def init():
     c, conn = connect()
     c.execute('''create table if not exists weather(sensor text, value real, 
                                                 date timestamp)''')
-    c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON weather(date DESC, sensor)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON weather(sensor, date DESC)''')
     conn.close()
     
 def write_db(weather):
@@ -24,9 +24,9 @@ def write_db(weather):
 
 def read_db(sensor, start_date, end_date):
     c, conn = connect()
-    c.execute("""SELECT date, value FROM weather WHERE date BETWEEN ? AND ?
-                 AND sensor = ? ORDER BY date DESC""",
-              (start_date, end_date, sensor, ))
+    sql = """SELECT date, value FROM weather WHERE sensor = ? AND
+             date BETWEEN ? AND ? ORDER BY date DESC"""
+    c.execute(sql, (start_date, end_date, sensor, ))
     rows = c.fetchall()
     c.close()
     return rows
