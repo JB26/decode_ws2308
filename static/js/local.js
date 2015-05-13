@@ -11,7 +11,7 @@ $('.auto_reload').click(function(event) {
 })
 
 function reload_data() {
-    var sensors = ["temp_out.temp_in", "humidity_out.humidity_in", "wind_v.wind_d", "pressure_in.rain"],
+    var sensors = ["temp_out.temp_in", "humidity_out.humidity_in", "wind_v.wind_d", "pressure_in.rain", "wind_d_avg"],
         opt = "_type=hours&number=24";
     for (sensor in sensors){
         sensor = sensors[sensor]
