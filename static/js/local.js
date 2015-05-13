@@ -51,7 +51,7 @@ function reload_data() {
                 $('#data_wind').text(wind_text);
             };
             if (chart_name != ''){
-                chart.load({
+                chart[chart_name].load({
                     columns: data,
                     unload: [data[1][0], data[3][0]]
                 });
