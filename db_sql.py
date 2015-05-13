@@ -26,7 +26,7 @@ def read_db(sensor, start_date, end_date):
     c, conn = connect()
     sql = """SELECT date, value FROM weather WHERE sensor = ? AND
              date BETWEEN ? AND ? ORDER BY date DESC"""
-    c.execute(sql, (start_date, end_date, sensor, ))
+    c.execute(sql, (sensor, start_date, end_date, ))
     rows = c.fetchall()
     c.close()
     return rows
