@@ -22,16 +22,20 @@ def read_current():
             weather['rain_last_hour'] = {'value' : rain_last_hour}
     return weather
 
-def read_data(sensor, start_date, end_date, limit_points = 0):
+def read_data(sensor, start_date, end_date):
     if sensor == 'wind_d_avg':
         sensor = 'wind_d'
         special = 'wind_d_avg'
     else:
         special = ''
-    rows = db_sql.read_db(sensor, start_date, end_date)
+    if (end_date - start_date) > timedelta(hours=25):
+        table = 'avg_30m'
+    else:
+        table = 'weather'
+    rows = db_sql.read_db(sensor, start_date, end_date, table)
     data = [['x_' + sensor],['data_' + sensor]]
     for row in rows:
-        data[0].append(row['date'][:-10])
+        data[0].append(row['date'][:16])
         data[1].append(row['value'])
     if sensor == "rain":
         if len(data[1]) > 2:
@@ -50,18 +54,6 @@ def read_data(sensor, start_date, end_date, limit_points = 0):
                        [ int(x/sum_wind*1000)/10 for x in wind_d_avg[1] ])
         else:
             data[1] = ['data_wind_d_avg'] + [0]*16
-
-    if limit_points != 0 and (len(data[1]) + 1) > limit_points:
-        step_width = int(len(data[1][1:])/limit_points) + 1
-        if sensor == "rain":
-            values = [ np.sum(data[1][i:i+step_width])
-                       for i in range(1,len(data[1]), step_width) ]
-        else:
-            values = [ np.mean(data[1][i:i+step_width])
-                       for i in range(1,len(data[1]), step_width) ]
-
-        data[1] = [data[1][0]] + list(np.round(values,decimals=2))
-        data[0] = [data[0][0]] + data[0][int(step_width/2)+1::step_width]
 
     if len(data[1]) == 1:
         data = [None]

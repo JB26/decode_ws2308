@@ -106,7 +106,6 @@ function new_graph(chart_name, show_subchart, range){
             data: {
                 xs: x_coord,
                 columns: data,
-                type: 'spline',
                 types: {
                     data_rain: 'bar',
                     data_wind_d_avg: 'bar'
@@ -150,6 +149,7 @@ function new_graph(chart_name, show_subchart, range){
             chart_settings.axis.y2 = {
                 show: true,
                 tick: {
+                    //format: function (d) { return d3.format('.2f')(d) + y2_unit; }
                     format: function (d) { return d + y2_unit; }
                 },
                 label: {

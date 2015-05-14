@@ -12,6 +12,11 @@ def init():
     c.execute('''create table if not exists weather(sensor text, value real, 
                                                 date timestamp)''')
     c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON weather(sensor, date DESC)''')
+
+    c.execute('''create table if not exists avg_30m(sensor text, value real, 
+                                                date timestamp)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON avg_30m(sensor, date DESC)''')
+
     conn.close()
     
 def write_db(weather):
@@ -22,11 +27,26 @@ def write_db(weather):
     conn.commit()
     conn.close()
 
-def read_db(sensor, start_date, end_date):
+def write_many_db(weather, table):
     c, conn = connect()
-    sql = """SELECT date, value FROM weather WHERE sensor = ? AND
-             date BETWEEN ? AND ? ORDER BY date DESC"""
+    sql = "INSERT INTO " + table +" VALUES (?, ?, ?)"
+    c.executemany(sql, weather )
+    conn.commit()
+    conn.close()
+
+def read_db(sensor, start_date, end_date, table='weather'):
+    c, conn = connect()
+    sql = ('SELECT date, value FROM ' + table + ' WHERE sensor = ? AND' + 
+           ' date BETWEEN ? AND ? ORDER BY date DESC')
     c.execute(sql, (sensor, start_date, end_date, ))
+    rows = c.fetchall()
+    c.close()
+    return rows
+
+def read_avg_last(table, sensor):
+    c, conn = connect()
+    sql = "SELECT date, value FROM " + table + " WHERE sensor = ? ORDER BY date DESC LIMIT 1"
+    c.execute(sql, (sensor, ))
     rows = c.fetchall()
     c.close()
     return rows

@@ -46,7 +46,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def json_statistic(self, sensor, number=None, _type=None, 
-                       start_date=None, end_date=None, limit_points = 800):
+                       start_date=None, end_date=None):
 
         sensors = sensor.split('.')
         start_date, end_date, error = get_period(number, _type, start_date,
@@ -57,7 +57,7 @@ class bibthek(object):
             data = []
             for sensor in sensors:
                 data += read_data(sensor, start_date,
-                                      end_date, limit_points)
+                                      end_date)
 
             return(json.dumps(data))
 
