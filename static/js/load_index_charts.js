@@ -11,7 +11,7 @@ $( document ).ajaxComplete(function() {
         new_graph("wind", false, '_type=hours&number=24')
         next = 'wind_d_avg'
     }else if (next=='wind_d_avg'){
-        new_graph("wind", false, '_type=hours&number=24')
+        new_graph("wind_d_avg", false, '_type=hours&number=24')
         next = 'None'
     }
 });
