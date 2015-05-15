@@ -73,7 +73,7 @@ def convert_data(data_block, rain_overflow):
     
 def get_sample(rp):
     dt = np.dtype('i2')
-    threshold = 13000
+    threshold = 7000
     response = rp.read(2**16)
     return ( abs( np.frombuffer(response, dtype=dt) ) 
              > threshold )
@@ -136,7 +136,7 @@ if __name__ == "__main__":
         os.mkfifo(rtl_pipe)
     except:
         pass
-    open_rtl_fm = ("rtl_fm -M am -f 433.993M -s 12k 2>/dev/null > "
+    open_rtl_fm = ("rtl_fm -M am -f 433.993M -g 50 -s 12k 2>/dev/null > "
                     + "/tmp/rtl_fm-stream & ")
     os.system(open_rtl_fm)
     rp = open(rtl_pipe, 'rb')
