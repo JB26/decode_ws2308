@@ -11,7 +11,7 @@ def read_current():
     weather = {}
     for sensor in sensors:
         rows = db_sql.read_db(sensor,
-                              (datetime.now() - timedelta(minutes = 610)),
+                              (datetime.now() - timedelta(minutes = 61)),
                               datetime.now())
         weather[sensor] = rows[0]
         if sensor == 'rain':
