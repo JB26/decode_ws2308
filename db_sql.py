@@ -43,6 +43,15 @@ def read_db(sensor, start_date, end_date, table='weather'):
     c.close()
     return rows
 
+def read_ev_sql(sensor, start_date, end_date, ev):
+    c, conn = connect()
+    sql = ('SELECT date, ' + ev + '(value) AS "value" FROM weather WHERE' +
+           ' sensor = ? AND date BETWEEN ? AND ?')
+    c.execute(sql, (sensor, start_date, end_date, ))
+    row = c.fetchone()
+    c.close()
+    return row
+
 def read_avg_last(table, sensor):
     c, conn = connect()
     sql = "SELECT date, value FROM " + table + " WHERE sensor = ? ORDER BY date DESC LIMIT 1"

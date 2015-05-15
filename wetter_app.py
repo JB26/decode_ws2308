@@ -5,7 +5,7 @@ from cherrypy.lib import static
 import json
 from datetime import datetime, timedelta
 
-from db_read import read_current, read_data
+from db_read import read_current, read_data, read_ev
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           input_encoding='utf-8', encoding_errors='replace')
@@ -37,12 +37,23 @@ class bibthek(object):
     def index(self):
         mytemplate = mylookup.get_template("index.html")
         weather = read_current()
-        return mytemplate.render(weather=weather, current="index" )
+        start_date, end_date, error = get_period(24, 'hours', None, None)
+        weather_max = read_ev(start_date, end_date, 'max')
+        weather_min = read_ev(start_date, end_date, 'min')
+        return mytemplate.render(weather=weather, weather_max=weather_max,
+                                 weather_min=weather_min, current="index" )
 
     @cherrypy.expose
     def stats(self, start_date=None, end_date=None):
         mytemplate = mylookup.get_template("index.html")
-        return mytemplate.render(current="stats")
+        if start_date == None:
+            start_date = datetime(2000, 1, 1)
+        if end_date == None:
+            end_date = datetime.now()
+        weather_max = read_ev(start_date, end_date, 'max')
+        weather_min = read_ev(start_date, end_date, 'min')
+        return mytemplate.render(weather_max=weather_max,
+                                 weather_min=weather_min, current="stats")
 
     @cherrypy.expose
     def json_statistic(self, sensor, number=None, _type=None, 
@@ -51,6 +62,10 @@ class bibthek(object):
         sensors = sensor.split('.')
         start_date, end_date, error = get_period(number, _type, start_date,
                                                  end_date)
+        weather_max_sql = read_ev(start_date, end_date, 'max')
+        weather_min_sql = read_ev(start_date, end_date, 'min')
+        weather_max = {}
+        weather_min = {}
         if error != None:
             return error
         else:
@@ -58,8 +73,17 @@ class bibthek(object):
             for sensor in sensors:
                 data += read_data(sensor, start_date,
                                       end_date)
+                if sensor not in ['wind_d', 'wind_d_avg', 'rain']:
+                    weather_max[sensor] = {
+                                   'value': weather_max_sql[sensor]['value'],
+                                   'date': weather_max_sql[sensor]['date']} # because sqlite object can't be json
+                    weather_min[sensor] = {
+                                   'value': weather_min_sql[sensor]['value'],
+                                   'date': weather_min_sql[sensor]['date']}
+            data_return = {'data' : data, 'max': weather_max,
+                           'min': weather_min}
 
-            return(json.dumps(data))
+            return(json.dumps(data_return))
 
 if __name__ == '__main__':
     cherrypy.quickstart(bibthek(), '/', 'app.conf')

@@ -1,0 +1,123 @@
+<div class="row">
+  <h2>Min und Max Werte im ausgewählten Zeitfenster</h2>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <h3>Aussen: max</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-md-4">Temperatur</td>
+        <td id="max_data_temp_out" class="col-md-4">${weather_max['temp_out']['value']} °C</td>
+        <td id="max_x_temp_out" class="col-md-4">${weather_max['temp_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td class="col-md-4">Luftfeuchte</td>
+        <td id="max_data_humidity_out" class="col-md-4">${weather_max['humidity_out']['value']} %</td>
+        <td id="max_x_humidity_out" class="col-md-4">${weather_max['humidity_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td class="col-md-4">Wind</td>
+        <td id="max_data_wind" class="col-md-4">${weather_max['wind_v']['value']} m/s</td>
+        <td id="max_x_wind_v" class="col-md-4">${weather_max['wind_v']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+    <div class="col-md-6">
+  <h3>Aussen: min</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-md-4">Temperatur</td>
+        <td id="min_data_temp_out" class="col-md-4">${weather_min['temp_out']['value']} °C</td>
+        <td id="min_x_temp_out" class="col-md-4">${weather_min['temp_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td class="col-md-4">Luftfeuchte</td>
+        <td id="min_data_humidity_out" class="col-md-4">${weather_min['humidity_out']['value']} %</td>
+        <td id="min_x_humidity_out" class="col-md-4">${weather_min['humidity_out']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td class="col-md-4">Wind</td>
+        <td id="min_data_wind" class="col-md-4">${weather_min['wind_v']['value']} m/s</td>
+        <td id="min_x_wind_v" class="col-md-4">${weather_min['wind_v']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <h3>Innen (Jürn): max</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Temperatur</td>
+        <td id="max_data_temp_in" class="col-md-4">${weather_max['temp_in']['value']} °C</td>
+        <td id="max_x_temp_in" class="col-md-4">${weather_max['temp_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftfeuchte</td>
+        <td id="max_data_humidity_in" class="col-md-4">${weather_max['humidity_in']['value']} %</td>
+        <td id="max_x_humidity_in" class="col-md-4">${weather_max['humidity_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftdruck</td>
+        <td id="max_data_pressure_in" class="col-md-4">${weather_max['pressure_in']['value']} hPa</td>
+        <td id="max_x_pressure_in" class="col-md-4">${weather_max['pressure_in']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+    <div class="col-md-6">
+  <h3>Innen (Jürn): min</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Wert</th>
+        <th>Messzeitpunkt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Temperatur</td>
+        <td id="min_data_temp_in" class="col-md-4">${weather_min['temp_in']['value']} °C</td>
+        <td id="min_x_temp_in" class="col-md-4">${weather_min['temp_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftfeuchte</td>
+        <td id="min_data_humidity_in" class="col-md-4">${weather_min['humidity_in']['value']} %</td>
+        <td id="min_x_humidity_in" class="col-md-4">${weather_min['humidity_in']['date'][:-10]}</td>
+      </tr>
+      <tr>
+        <td>Luftdruck</td>
+        <td id="min_data_pressure_in" class="col-md-4">${weather_min['pressure_in']['value']} hPa</td>
+        <td id="min_x_pressure_in" class="col-md-4">${weather_min['pressure_in']['date'][:-10]}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

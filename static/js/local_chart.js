@@ -97,6 +97,7 @@ function new_graph(chart_name, show_subchart, range){
     ]);
 
     $.getJSON( "/json_statistic/?" + opt[1], {sensor:sensor}, function(data) {
+        data = data['data']
         var chart_settings = {
             bindto: id,
             padding: {
@@ -179,7 +180,7 @@ function new_graph(chart_name, show_subchart, range){
 
 $('.zoom').click(function(event) {
     var new_range = [],
-        chart_name = $(this).attr('id').split("_")[1],
+        chart_name = $(this).attr('id').substr(5),
         z = chart[chart_name].zoom();
     for (i = 0; i < 2; i++) {
         new_range[i] = z[i].getFullYear() + '-' + pad(z[i].getMonth() + 1) +

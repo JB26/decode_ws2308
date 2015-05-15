@@ -11,7 +11,7 @@ def read_current():
     weather = {}
     for sensor in sensors:
         rows = db_sql.read_db(sensor,
-                              (datetime.now() - timedelta(minutes = 61)),
+                              (datetime.now() - timedelta(minutes = 610)),
                               datetime.now())
         weather[sensor] = rows[0]
         if sensor == 'rain':
@@ -20,6 +20,14 @@ def read_current():
             else:
                 rain_last_hour = "Nan"
             weather['rain_last_hour'] = {'value' : rain_last_hour}
+    return weather
+
+def read_ev(start_date, end_date, ev):
+    sensors = ['temp_out', 'temp_in', 'humidity_out', 'humidity_in', 'wind_v',
+               'pressure_in']
+    weather = {}
+    for sensor in sensors:
+        weather[sensor] = db_sql.read_ev_sql(sensor, start_date, end_date, ev)
     return weather
 
 def read_data(sensor, start_date, end_date):
