@@ -126,6 +126,8 @@ def main(rp):
         else:
             print("Error: Not all blocks received")
             return False
+    else:
+        return False
 
 if __name__ == "__main__":
     db_sql.init()
