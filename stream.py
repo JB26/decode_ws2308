@@ -73,7 +73,7 @@ def convert_data(data_block, rain_overflow):
     
 def get_sample(rp):
     dt = np.dtype('i2')
-    threshold = 7000
+    threshold = 2000  # Weird it did work with 13000 but not anymore?
     response = rp.read(2**16)
     return ( abs( np.frombuffer(response, dtype=dt) ) 
              > threshold )
