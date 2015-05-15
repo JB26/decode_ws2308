@@ -108,15 +108,15 @@ def main(rp):
                     packet.append('0')
                     pulse_len = 0
                 else:
-                    pulse_len = 0
                     print("Error: Pulse to long or to short")
+                    return False
             elif silence > 30 and len(packet) > 0:
                 if len(packet) == 52:
                     block.append(packet)
                     packet = []
                 else:
                     print("Error: Not enough bits received")
-                    packet = []
+                    return False
             else:
                 silence += 1
         if len(block) == 6 or len(block) == 8:
@@ -125,8 +125,7 @@ def main(rp):
             return True
         else:
             print("Error: Not all blocks received")
-        
-    return False
+            return False
 
 if __name__ == "__main__":
     db_sql.init()
