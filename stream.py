@@ -71,14 +71,23 @@ def convert_data(data_block, rain_overflow):
         db_sql.write_db(weather)
     db_sql.write_db(weather_inside())
     
-def get_sample(rp):
+def get_sample(f):
     dt = np.dtype('i2')
-    threshold = 3000  # Weird it did work with 13000 but not anymore?
-    response = rp.read(2**16)
-    return ( abs( np.frombuffer(response, dtype=dt) ) 
-             > threshold )
+    threshold = 6000  # Weird it did work with 13000 but not anymore?
+    x = []
+    i = 0
+    while len(x) == 0:
+        sleep(5)
+        response = rp.read(2**18)
+        x = np.absolute( np.frombuffer(response, dtype=dt) )
+        if len(x) == 0:
+            i += 1
+            if i > 5:
+                return [ None, True ]
+    error = False
+    return [( x > threshold ), error]
 
-def main(rp):
+def main(f):
     with open('rain_overflow.save', 'r') as f:
                rain_overflow = float(f.read())
 
@@ -87,15 +96,21 @@ def main(rp):
     packet = []
     block = []
 
-    sample = get_sample(rp)
+    sample = get_sample(f)
+    if sample[1]:
+        print("Broken Pipe?")
+        return True
+    else:
+        sample = sample[0]
+    print("test sample")
     if np.any(sample):
         # Make sure the signal is not cut off
-        sample = np.append(sample, get_sample(rp))
+        sample = np.append(sample, get_sample(f)[0])
         index = np.nonzero(sample == True)[0]
         # Cut signal
         sample = sample[index[0]:index[-1] + 1]
         # Add "silence" to mark the end of the signal
-        sample = np.append(sample, np.array([False]*40))
+        sample = np.append(sample, np.array([False]*80))
         for val in sample:
             if val == True:
                 silence = 0
@@ -110,7 +125,7 @@ def main(rp):
                 else:
                     print("Error: Pulse to long or to short")
                     return True
-            elif silence > 30 and len(packet) > 0:
+            elif silence > 60 and len(packet) > 0:
                 if len(packet) == 52:
                     block.append(packet)
                     packet = []
@@ -120,7 +135,7 @@ def main(rp):
             else:
                 silence += 1
         if len(block) == 6 or len(block) == 8:
-            #print("Success: Block received")
+            print("Success: Block received")
             convert_data(block, rain_overflow)
             return True
         else:
@@ -131,26 +146,22 @@ def main(rp):
 
 if __name__ == "__main__":
     db_sql.init()
-    rtl_pipe = "/tmp/rtl_fm-stream"
-    try:
-        os.mkfifo(rtl_pipe)
-    except:
-        pass
+    tmp_file = "/tmp/rtl_fm-stream.tmp"
     open_rtl_fm = ("rtl_fm -M am -f 433.993M -g 50 -s 12k 2>/dev/null > "
-                    + "/tmp/rtl_fm-stream & ")
-    os.system("killall rtl_fm") # killall old instances
-    sleep(2)
-    os.system("killall -9 rtl_fm")
-    sleep(2)
+                    + tmp_file + " & ")
+    os.system("killall rtl_fm 2>/dev/null") # killall old instances
+    os.system("killall -9 rtl_fm 2>/dev/null")
     os.system(open_rtl_fm)
-    rp = open(rtl_pipe, 'rb')
+    sleep(3)
+    f = open(tmp_file, 'rb')
     wait = False
     while True:
         if wait:
-            os.system("killall rtl_fm")
-            sleep(2)
-            os.system("killall -9 rtl_fm")
-            sleep(105)
+            os.system("killall rtl_fm 2>/dev/null")
+            os.system("killall -9 rtl_fm 2>/dev/null")
+            sleep(100)
             os.system(open_rtl_fm)
             sleep(3)
-        wait = main(rp)
+            start_up = False
+            f.seek(0, 0)
+        wait = main(f)
