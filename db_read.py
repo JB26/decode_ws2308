@@ -54,7 +54,8 @@ def read_data(sensor, start_date, end_date):
             data[1][1] = 0
 
     if special == 'wind_d_avg' and len(data[1]) > 1:
-        wind_d_avg = np.unique(data[1][1:], return_counts = True)
+        wind_d_avg = np.unique(np.round(np.array(data[1][1:])*2)/2,
+                               return_counts = True)
         data[0] = ['x_wind_d_avg'] + list(wind_d_avg[0])
         sum_wind = wind_d_avg[1].sum()
         if sum_wind != 0:
