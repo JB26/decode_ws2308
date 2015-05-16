@@ -73,7 +73,7 @@ def convert_data(data_block, rain_overflow):
     
 def get_sample(rp):
     dt = np.dtype('i2')
-    threshold = 2000  # Weird it did work with 13000 but not anymore?
+    threshold = 3000  # Weird it did work with 13000 but not anymore?
     response = rp.read(2**16)
     return ( abs( np.frombuffer(response, dtype=dt) ) 
              > threshold )
@@ -109,14 +109,14 @@ def main(rp):
                     pulse_len = 0
                 else:
                     print("Error: Pulse to long or to short")
-                    return False
+                    return True
             elif silence > 30 and len(packet) > 0:
                 if len(packet) == 52:
                     block.append(packet)
                     packet = []
                 else:
                     print("Error: Not enough bits received")
-                    return False
+                    return True
             else:
                 silence += 1
         if len(block) == 6 or len(block) == 8:
@@ -125,7 +125,7 @@ def main(rp):
             return True
         else:
             print("Error: Not all blocks received")
-            return False
+            return True
     else:
         return False
 
@@ -138,13 +138,19 @@ if __name__ == "__main__":
         pass
     open_rtl_fm = ("rtl_fm -M am -f 433.993M -g 50 -s 12k 2>/dev/null > "
                     + "/tmp/rtl_fm-stream & ")
+    os.system("killall rtl_fm") # killall old instances
+    sleep(2)
+    os.system("killall -9 rtl_fm")
+    sleep(2)
     os.system(open_rtl_fm)
     rp = open(rtl_pipe, 'rb')
     wait = False
     while True:
         if wait:
             os.system("killall rtl_fm")
-            sleep(108)
+            sleep(2)
+            os.system("killall -9 rtl_fm")
+            sleep(105)
             os.system(open_rtl_fm)
             sleep(3)
         wait = main(rp)
