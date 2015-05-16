@@ -17,6 +17,10 @@ def init():
                                                 date timestamp)''')
     c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON avg_30m(sensor, date DESC)''')
 
+    c.execute('''create table if not exists avg_6h(sensor text, value real, 
+                                                date timestamp)''')
+    c.execute('''CREATE INDEX IF NOT EXISTS date_sensor_idx ON avg_6h(sensor, date DESC)''')
+
     conn.close()
     
 def write_db(weather):

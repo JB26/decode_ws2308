@@ -36,7 +36,10 @@ def read_data(sensor, start_date, end_date):
         special = 'wind_d_avg'
     else:
         special = ''
-    if (end_date - start_date) > timedelta(hours=25):
+
+    if (end_date - start_date) > timedelta(hours=(15*24)):
+        table = 'avg_6h'
+    elif (end_date - start_date) > timedelta(hours=25):
         table = 'avg_30m'
     else:
         table = 'weather'

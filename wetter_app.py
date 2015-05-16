@@ -12,6 +12,7 @@ mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
 
 default_type = "hours"
 default_number = 24
+collecting_start = datetime(2015, 5, 9)
 
 def get_period(number, _type, start_date, end_date):
     if number != None and _type != None:
@@ -47,11 +48,15 @@ class bibthek(object):
     def stats(self, start_date=None, end_date=None):
         mytemplate = mylookup.get_template("index.html")
         if start_date == None:
-            start_date = datetime(2000, 1, 1)
+            start_date = collecting_start
         if end_date == None:
             end_date = datetime.now()
         weather_max = read_ev(start_date, end_date, 'max')
         weather_min = read_ev(start_date, end_date, 'min')
+        if weather_max['temp_in']['value'] == None:
+            return("Kein gültiger Zeitraum ausgewählt.\n" +
+                   "Dies kann vor allem passieren wenn ein " +
+                   "kleiner Bereich ganz links ausgewählt wurde.")
         return mytemplate.render(weather_max=weather_max,
                                  weather_min=weather_min, current="stats")
 
@@ -62,6 +67,8 @@ class bibthek(object):
         sensors = sensor.split('.')
         start_date, end_date, error = get_period(number, _type, start_date,
                                                  end_date)
+        if start_date < collecting_start:
+            start_date = collecting_start
         weather_max_sql = read_ev(start_date, end_date, 'max')
         weather_min_sql = read_ev(start_date, end_date, 'min')
         weather_max = {}

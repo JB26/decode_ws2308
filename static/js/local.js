@@ -40,7 +40,7 @@ function reload_data() {
                     wind_text = wind_text + data[i][1] + '°';
                     chart_name = 'wind';
                 }else if (data[i][0] == "data_rain"){
-                    $('#data_rain').text(data[i][1] + ' ml');
+                    $('#data_rain').text(data[i][1] + ' mm');
                     chart_name = 'pres_rain';
                 }else if (data[i][0] == "data_pressure_in"){
                     $('#data_pressure_in').text(data[i][1] + ' hPa');

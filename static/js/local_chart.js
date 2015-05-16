@@ -60,7 +60,7 @@ function new_graph(chart_name, show_subchart, range){
             y_label = 'Luftdruck',
             y2_label = 'Regen',
             y_unit = 'hPa',
-            y2_unit = 'ml',
+            y2_unit = 'mm',
             data_names = {
                 data_pressure_in: 'Luftdruck',
                 data_rain: 'Regen'
