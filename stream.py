@@ -78,7 +78,7 @@ def get_sample(f):
     i = 0
     while len(x) == 0:
         sleep(5)
-        response = rp.read(2**18)
+        response = f.read(2**18)
         x = np.absolute( np.frombuffer(response, dtype=dt) )
         if len(x) == 0:
             i += 1
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     os.system("killall rtl_fm 2>/dev/null") # killall old instances
     os.system("killall -9 rtl_fm 2>/dev/null")
     os.system(open_rtl_fm)
-    sleep(3)
+    sleep(5)
     f = open(tmp_file, 'rb')
     wait = False
     while True:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             os.system("killall -9 rtl_fm 2>/dev/null")
             sleep(100)
             os.system(open_rtl_fm)
-            sleep(3)
+            sleep(5)
             start_up = False
             f.seek(0, 0)
         wait = main(f)
