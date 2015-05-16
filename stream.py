@@ -71,14 +71,14 @@ def convert_data(data_block, rain_overflow):
         db_sql.write_db(weather)
     db_sql.write_db(weather_inside())
     
-def get_sample(f):
+def get_sample(stream):
     dt = np.dtype('i2')
     threshold = 6000  # Weird it did work with 13000 but not anymore?
     x = []
     i = 0
     while len(x) == 0:
         sleep(5)
-        response = f.read(2**18)
+        response = stream.read(2**18)
         x = np.absolute( np.frombuffer(response, dtype=dt) )
         if len(x) == 0:
             i += 1
@@ -87,7 +87,7 @@ def get_sample(f):
     error = False
     return [( x > threshold ), error]
 
-def main(f):
+def main(stream):
     with open('rain_overflow.save', 'r') as f:
                rain_overflow = float(f.read())
 
@@ -96,7 +96,7 @@ def main(f):
     packet = []
     block = []
 
-    sample = get_sample(f)
+    sample = get_sample(stream)
     if sample[1]:
         print("Broken Pipe?")
         return True
@@ -105,7 +105,7 @@ def main(f):
     print("test sample")
     if np.any(sample):
         # Make sure the signal is not cut off
-        sample = np.append(sample, get_sample(f)[0])
+        sample = np.append(sample, get_sample(stream)[0])
         index = np.nonzero(sample == True)[0]
         # Cut signal
         sample = sample[index[0]:index[-1] + 1]
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     os.system("killall -9 rtl_fm 2>/dev/null")
     os.system(open_rtl_fm)
     sleep(3)
-    f = open(tmp_file, 'rb')
+    stream = open(tmp_file, 'rb')
     wait = False
     while True:
         if wait:
@@ -163,5 +163,5 @@ if __name__ == "__main__":
             os.system(open_rtl_fm)
             sleep(3)
             start_up = False
-            f.seek(0, 0)
-        wait = main(f)
+            stream.seek(0, 0)
+        wait = main(stream)
