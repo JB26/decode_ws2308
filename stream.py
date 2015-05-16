@@ -152,7 +152,7 @@ if __name__ == "__main__":
     os.system("killall rtl_fm 2>/dev/null") # killall old instances
     os.system("killall -9 rtl_fm 2>/dev/null")
     os.system(open_rtl_fm)
-    sleep(5)
+    sleep(3)
     f = open(tmp_file, 'rb')
     wait = False
     while True:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             os.system("killall -9 rtl_fm 2>/dev/null")
             sleep(100)
             os.system(open_rtl_fm)
-            sleep(5)
+            sleep(3)
             start_up = False
             f.seek(0, 0)
         wait = main(f)
