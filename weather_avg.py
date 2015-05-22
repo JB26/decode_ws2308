@@ -22,7 +22,6 @@ def write_avg():
             rows = db_sql.read_db(sensor, start_date, end_date, table['read'])
             if len(rows) < 30:
                 print("Not enough (new) values in db")
-                print(table['table'])
                 break
             start = str_to_date(rows[0]['date']) # We're going back in time
             if table['table'] == 'avg_30m':
