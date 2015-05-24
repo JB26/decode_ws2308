@@ -8,9 +8,9 @@ def write_avg():
     sensors = ['temp_out', 'temp_in', 'humidity_out', 'humidity_in', 'wind_d',
                'wind_v', 'rain', 'pressure_in']
 
-    weather = list()
     for table in [{'table': 'avg_30m', 'delta_half': 15, 'read': 'weather'},
                 {'table': 'avg_6h', 'delta_half': 3*60, 'read': 'avg_30m'}]:
+        weather = list()
         for sensor in sensors:
             last = db_sql.read_avg_last(table['table'], sensor)
             if last != []:
