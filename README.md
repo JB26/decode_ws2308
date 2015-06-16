@@ -1,6 +1,6 @@
-# decode_ws
-## Was ist decode_ws?
-decode\_ws sammelt Wetterdaten von einer Wetterstation deren Daten über einen rtl\_sdr kompatiblen USB-Stick empfangen wurden.
+# decode_ws2308
+## Was ist decode_ws2308?
+decode\_ws sammelt Wetterdaten von einer Wetterstation (La Crosse WS-2308) deren Daten über einen rtl\_sdr kompatiblen USB-Stick empfangen wurden.
 Außerdem werden Innenraum Daten durch einen arduino gemessen.
 Die gesammelten Daten werden in einer webapp visualisiert.
 
