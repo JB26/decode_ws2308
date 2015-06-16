@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-
+'''Read and convert data'''
 # Needs 12k as input!
 # One signal at 12kHz is around 28000 "short int" long
 
@@ -12,20 +12,19 @@ import db_sql
 from arduino_read import weather_inside
 
 def convert_data(data_block, rain_overflow):
-    
-    with open('rain_last.save', 'r') as f:
-        rain_last = int(f.read())
-    
+    '''Check data and convert binary'''
+    with open('rain_last.save', 'r') as _file:
+        rain_last = int(_file.read())
+
     weather = {}
 
     health = [True]*len(data_block)
     # Convert 4 bits each to an int -> 52 bits to 13 int
     for i, data in enumerate(data_block):
-        data = [ int(''.join(data[j:j+4]), 2) 
-                          for j in range(0,52,4) ]
-        data_block[i] = [ str(j) for j in data ]
+        data = [int(''.join(data[j:j+4]), 2) for j in range(0, 52, 4)]
+        data_block[i] = [str(j) for j in data]
         if sum(data) % 2 != 0:
-             health[i] = False
+            health[i] = False
         # Checksum
         if sum(data[-1:]) & 15 != data[-1]:
             health[i] = False
@@ -34,7 +33,6 @@ def convert_data(data_block, rain_overflow):
             health[i] = False
 
     # convert data
-    
     alt = int(len(data_block)/2)
     pos = []
     for i in range(0, alt):
@@ -48,48 +46,46 @@ def convert_data(data_block, rain_overflow):
         elif data_block[i][2] == '1' or data_block[i][2] == '5':
             weather['humidity_out'] = int(''.join(data_block[i][7:9]))
         elif data_block[i][2] == '3' or data_block[i][2] == '7':
-            weather['wind_v'] = floor( sum([
-                                            int(val)*16**(1-j) for j,val in 
-                                            enumerate(data_block[i][7:9])
-                                           ])*90/25
-                                      )/10
+            weather['wind_v'] = floor(sum([int(val)*16**(1-j) for j, val in
+                                           enumerate(data_block[i][7:9])])
+                                      * 90/25)/10
             weather['wind_d'] = int(data_block[i][9]) * 22.5
         if data_block[i][2] == '2' or data_block[i][2] == '6':
-            rain_temp = sum([
-                             int(val)*16**(2-j) for j,val in 
-                             enumerate(data_block[i][7:10])
-                           ])
+            rain_temp = sum([int(val)*16**(2-j) for j, val in
+                             enumerate(data_block[i][7:10])])
             if rain_temp < rain_last:
-                with open('rain_overflow.save', 'w') as f:
+                with open('rain_overflow.save', 'w') as _file:
                     rain_overflow = rain_last * 0.51657 + rain_overflow
-                    f.write(str(rain_overflow))
-            with open('rain_last.save', 'w') as f:
-                f.write(str(rain_temp))
+                    _file.write(str(rain_overflow))
+            with open('rain_last.save', 'w') as _file:
+                _file.write(str(rain_temp))
             weather['rain'] = rain_temp * 0.51657 + rain_overflow
 
     if len(weather) > 0:
         db_sql.write_db(weather)
     db_sql.write_db(weather_inside())
-    
+
 def get_sample(stream):
+    '''Read data'''
     dt = np.dtype('i2')
     threshold = 6000  # Weird it did work with 13000 but not anymore?
-    x = []
+    data = []
     i = 0
-    while len(x) == 0:
+    while len(data) == 0:
         sleep(5)
         response = stream.read(2**18)
-        x = np.absolute( np.frombuffer(response, dtype=dt) )
-        if len(x) == 0:
+        data = np.absolute(np.frombuffer(response, dtype=dt))
+        if len(data) == 0:
             i += 1
             if i > 5:
-                return [ None, True ]
+                return [None, True]
     error = False
-    return [( x > threshold ), error]
+    return [(data > threshold), error]
 
-def main(stream):
-    with open('rain_overflow.save', 'r') as f:
-               rain_overflow = float(f.read())
+def binary(stream):
+    '''Convert data to binary'''
+    with open('rain_overflow.save', 'r') as _file:
+        rain_overflow = float(_file.read())
 
     silence = 0
     pulse_len = 0
@@ -143,11 +139,11 @@ def main(stream):
     else:
         return False
 
-if __name__ == "__main__":
-    db_sql.init()
+def main():
+    '''Wait for data'''
     tmp_file = "/tmp/rtl_fm-stream.tmp"
-    open_rtl_fm = ("rtl_fm -M am -f 433.993M -g 50 -s 12k 2>/dev/null > "
-                    + tmp_file + " & ")
+    open_rtl_fm = ("rtl_fm -M am -f 433.993M -g 50 -s 12k 2>/dev/null > " +
+                   tmp_file + " & ")
     os.system("killall rtl_fm 2>/dev/null") # killall old instances
     os.system("killall -9 rtl_fm 2>/dev/null")
     os.system(open_rtl_fm)
@@ -161,6 +157,9 @@ if __name__ == "__main__":
             sleep(100)
             os.system(open_rtl_fm)
             sleep(3)
-            start_up = False
             stream.seek(0, 0)
-        wait = main(stream)
+        wait = binary(stream)
+
+if __name__ == "__main__":
+    db_sql.init()
+    main()

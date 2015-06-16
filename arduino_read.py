@@ -1,7 +1,9 @@
+'''Get data from arduino'''
 import serial
 from time import sleep
 
 def weather_inside():
+    '''Ask arduino for data'''
     weather = {}
     ser = serial.Serial('/dev/ttyUSB0', 9600)
     sleep(2)
